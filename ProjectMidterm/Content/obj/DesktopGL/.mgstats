@@ -1,0 +1,10 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"D:/ProjectMidterm/ProjectMidterm/Content/bg.png","D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/bg.xnb","TextureProcessor","Texture2DContent",6917679,28082261,1.165428
+"D:/ProjectMidterm/ProjectMidterm/Content/bubble.png","D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/bubble.xnb","TextureProcessor","Texture2DContent",393755,1440085,0.1662912
+"D:/ProjectMidterm/ProjectMidterm/Content/button.png","D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/button.xnb","TextureProcessor","Texture2DContent",96590,469297,0.1229757
+"D:/ProjectMidterm/ProjectMidterm/Content/cat.png","D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/cat.xnb","TextureProcessor","Texture2DContent",1020224,13996885,0.5517444
+"D:/ProjectMidterm/ProjectMidterm/Content/fish.png","D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/fish.xnb","TextureProcessor","Texture2DContent",276443,1440085,0.1784745
+"D:/ProjectMidterm/ProjectMidterm/Content/fishbowl.png","D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/fishbowl.xnb","TextureProcessor","Texture2DContent",488227,1440085,0.1753594
+"D:/ProjectMidterm/ProjectMidterm/Content/Gamefont.spritefont","D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/Gamefont.xnb","FontDescriptionProcessor","SpriteFontContent",2068,21538,0.1898478
+"D:/ProjectMidterm/ProjectMidterm/Content/goldfish.png","D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/goldfish.xnb","TextureProcessor","Texture2DContent",262219,1440085,0.1658844
+"D:/ProjectMidterm/ProjectMidterm/Content/pufferfish.png","D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/pufferfish.xnb","TextureProcessor","Texture2DContent",319190,1440085,0.1800281

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>Reach</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/bg.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/bubble.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/button.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/cat.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/fish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/fishbowl.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Gamefont.spritefont</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/goldfish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/pufferfish.png</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>
