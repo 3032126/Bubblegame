@@ -8,7 +8,7 @@ namespace ProjectMidterm.GameObjects
     public class GridManager
     {
         private Dictionary<Vector2, Bubble> _bubbleGrid;
-        private int _bubbleSize = 32;
+        private int _bubbleSize = 30; // ปรับขนาดให้ตรงกับขนาดที่ใช้จริง
 
         public GridManager()
         {
@@ -37,12 +37,19 @@ namespace ProjectMidterm.GameObjects
         }
 
         private Vector2 GetNearestGridPosition(Vector2 position)
-        {
-            float x = (float)Math.Round((position.X - 50) / _bubbleSize) * _bubbleSize + 50;
-            float y = (float)Math.Round((position.Y - 50) / _bubbleSize) * _bubbleSize + 50;
+{
+    int column = (int)Math.Round((position.X - 50) / _bubbleSize);
+    int row = (int)Math.Round((position.Y - 50) / (_bubbleSize * 0.85f)); // เพิ่มระยะห่างแนวตั้ง
 
-            return new Vector2(x, y);
-        }
+    // ถ้าเป็นแถวเลขคี่ ให้เลื่อนมาทางขวาครึ่งหนึ่งของ `_bubbleSize`
+    float offsetX = (row % 2 == 1) ? _bubbleSize / 2 : 0;
+
+    float x = column * _bubbleSize + 50 + offsetX;
+    float y = row * (_bubbleSize * 0.85f) + 50;
+
+    return new Vector2(x, y);
+}
+
 
         public void Draw(SpriteBatch spriteBatch, Dictionary<string, Texture2D> bubbleTextures)
         {
