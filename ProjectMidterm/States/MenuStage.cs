@@ -24,13 +24,12 @@ namespace ProjectMidterm.States
         private MouseState _previousMouseState;
 
         public MenuState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content)
-            : base(game, graphicsDevice, content) // ✅ Correct base constructor
+            : base(game, graphicsDevice, content)
         {
             _backgroundTexture = _content.Load<Texture2D>("bg");
             _buttonTexture = _content.Load<Texture2D>("button");
             _font = _content.Load<SpriteFont>("Gamefont");
 
-            // Define button positions
             _startButtonRect = new Rectangle(500, 120, 200, 50);
             _optionsButtonRect = new Rectangle(500, 190, 200, 50);
             _gachaButtonRect = new Rectangle(500, 260, 200, 50);

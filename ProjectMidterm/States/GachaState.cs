@@ -35,6 +35,7 @@ namespace ProjectMidterm.States
         private float _animationAlpha = 0f;
         private float _animationScale = 0.5f;
         private float _animationSpeed = 0.05f;
+        public Dictionary<string, Texture2D> ItemTextures => _itemTextures;
 
         public GachaState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content)
             : base(game, graphicsDevice, content)
@@ -186,7 +187,9 @@ namespace ProjectMidterm.States
 
             spriteBatch.End();
         }
-        private void PerformRoll(int rollCount)
+        public string LastRolledItem { get; private set; } = "";
+
+        public void PerformRoll(int rollCount)
         {
             List<string> rewards = new List<string> { "Goldfish", "Pufferfish", "Rare Fish", "Legendary Fish" };
             List<int> probabilities = new List<int> { 60, 30, 9, 1 };
@@ -205,6 +208,10 @@ namespace ProjectMidterm.States
                     {
                         _currentRollItems.Add(rewards[j]);
                         _obtainedItems.Add(rewards[j]);
+
+                        LastRolledItem = rewards[j];
+
+                        System.Console.WriteLine($"Rolled Fish: {LastRolledItem}");
                         break;
                     }
                 }
@@ -216,6 +223,7 @@ namespace ProjectMidterm.States
             _animationAlpha = 0f;
             _animationScale = 0.5f;
         }
+
         public override void PostUpdate(GameTime gameTime) { }
 
     }

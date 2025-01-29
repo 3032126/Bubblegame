@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProjectMidterm")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+afca588c762bf3aaf5808c2afccab8843f85a52f")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProjectMidterm")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProjectMidterm")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

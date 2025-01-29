@@ -56,6 +56,6 @@ namespace ProjectMidterm
             _currentState.Draw(gameTime, _spriteBatch);
             base.Draw(gameTime);
         }
-
     }
+
 }

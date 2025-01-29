@@ -5,16 +5,28 @@
   <Config />
   <SourceFiles>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/bg.png</File>
-    <File>D:/ProjectMidterm/ProjectMidterm/Content/bubble.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_1.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_2.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_3.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_4.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_5.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/button.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/cat.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/fish.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/fishbowl.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/Gamefont.spritefont</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/goldfish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/PokemonSoundtrack.mp3</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/pufferfish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Shootingeffect.wav</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace ProjectMidterm.States
@@ -9,149 +10,155 @@ namespace ProjectMidterm.States
     public class GameplayState : State
     {
         private Texture2D _backgroundTexture;
-        private Texture2D _fish;
-        private Texture2D _bubble;
-
+        private Dictionary<string, Texture2D> _bubbleTextures;
+        private Texture2D _fishTexture;
         private Vector2 _fishPosition;
         private float _fishRotation;
         private Vector2 _currentBubblePosition;
         private Vector2 _bubbleDirection;
-        private List<Vector2> _grid;
-
+        private Dictionary<Vector2, string> _bubbleGrid;
         private bool _isBubbleFired;
+        private string _currentBubbleColor;
+        private string _nextBubbleColor;
+        private Random _random;
         private int _score;
+        private int _gridWidth = 8;
+        private int _gridHeight = 10;
+        private int _bubbleSize = 32;
 
         public GameplayState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content)
             : base(game, graphicsDevice, content)
         {
             _backgroundTexture = _content.Load<Texture2D>("bg");
-            _fish = _content.Load<Texture2D>("fish");
-            _bubble = _content.Load<Texture2D>("bubble");
+            _fishTexture = _content.Load<Texture2D>("fish");
 
-            _fishPosition = new Vector2(400, 400);
+            _bubbleTextures = new Dictionary<string, Texture2D>
+            {
+                { "bubble1", _content.Load<Texture2D>("Bubble_1") },
+                { "bubble2", _content.Load<Texture2D>("Bubble_2") },
+                { "bubble3", _content.Load<Texture2D>("Bubble_3") },
+                { "bubble4", _content.Load<Texture2D>("Bubble_4") },
+                { "bubble5", _content.Load<Texture2D>("Bubble_5") }
+            };
+
+            _fishPosition = new Vector2(400, 450);
             _fishRotation = 0f;
             _currentBubblePosition = _fishPosition;
             _bubbleDirection = Vector2.Zero;
             _isBubbleFired = false;
-            _grid = new List<Vector2>();
+            _bubbleGrid = new Dictionary<Vector2, string>();
+            _random = new Random();
+            _score = 0;
 
-            for (int y = 0; y < 5; y++)
+            GenerateInitialGrid();
+            LoadNewBubble();
+        }
+
+        private void GenerateInitialGrid()
+        {
+            string[] colors = { "bubble1", "bubble2", "bubble3", "bubble4", "bubble5" };
+
+            for (int y = 0; y < 6; y++)
             {
-                for (int x = 0; x < 8; x++)
+                for (int x = 0; x < _gridWidth; x++)
                 {
-                    _grid.Add(new Vector2(50 + x * 50, 50 + y * 50));
+                    Vector2 position = new Vector2(x * _bubbleSize + 50, y * _bubbleSize + 50);
+                    _bubbleGrid[position] = colors[_random.Next(colors.Length)];
                 }
             }
-
-            _score = 0;
         }
+
+        private void LoadNewBubble()
+        {
+            string[] colors = { "bubble1", "bubble2", "bubble3", "bubble4", "bubble5" };
+
+            if (string.IsNullOrEmpty(_currentBubbleColor))
+            {
+                _currentBubbleColor = colors[_random.Next(colors.Length)];
+                _nextBubbleColor = colors[_random.Next(colors.Length)];
+            }
+            else
+            {
+                _currentBubbleColor = _nextBubbleColor;
+                _nextBubbleColor = colors[_random.Next(colors.Length)];
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             var state = Keyboard.GetState();
 
-            // หมุนปลา (แมว)
             if (state.IsKeyDown(Keys.Left))
-                _fishRotation -= 0.05f; // หมุนไปทางซ้าย
+                _fishRotation -= 0.05f;
             if (state.IsKeyDown(Keys.Right))
-                _fishRotation += 0.05f; // หมุนไปทางขวา
+                _fishRotation += 0.05f;
 
-            // ยิงฟอง
             if (!_isBubbleFired && state.IsKeyDown(Keys.Space))
             {
-                System.Console.WriteLine("Bubble fired!");
-                _isBubbleFired = true;
-                _bubbleDirection = new Vector2((float)System.Math.Sin(_fishRotation), -(float)System.Math.Cos(_fishRotation)); // กำหนดทิศทางยิง
-                _currentBubblePosition = _fishPosition;
+                FireBubble();
             }
 
-
-            // อัปเดตตำแหน่งฟอง
             if (_isBubbleFired)
             {
-                _currentBubblePosition += _bubbleDirection * 5f;
+                _currentBubblePosition += _bubbleDirection * 10f;
 
-                // ตรวจสอบการชนกับ grid
-                for (int i = 0; i < _grid.Count; i++)
+                foreach (var position in _bubbleGrid.Keys)
                 {
-                    if (Vector2.Distance(_currentBubblePosition, _grid[i]) < 25)
+                    if (Vector2.Distance(_currentBubblePosition, position) < _bubbleSize)
                     {
-                        // Debug: พิมพ์ข้อความเมื่อชน
-                        System.Console.WriteLine($"Bubble hit grid at index {i}, Position: {_grid[i]}");
-
-                        _grid.Add(_currentBubblePosition);
-                        _currentBubblePosition = _fishPosition;
+                        AttachBubbleToGrid(_currentBubblePosition, _currentBubbleColor);
                         _isBubbleFired = false;
-                        CheckMatch();
-                        break;
+                        LoadNewBubble();
+                        return;
                     }
                 }
 
-                // ฟองออกนอกจอ
-                if (_currentBubblePosition.Y < 0 || _currentBubblePosition.X < 0 || _currentBubblePosition.X > 780)
+                if (_currentBubblePosition.X < 0 || _currentBubblePosition.X > 800)
                 {
-                    _currentBubblePosition = _fishPosition;
+                    _bubbleDirection.X *= -1;
+                }
+
+                if (_currentBubblePosition.Y < 50)
+                {
+                    AttachBubbleToGrid(_currentBubblePosition, _currentBubbleColor);
                     _isBubbleFired = false;
+                    LoadNewBubble();
                 }
             }
         }
 
-        private void CheckMatch()
+        private void FireBubble()
         {
-            var visited = new HashSet<Vector2>();
-            var toRemove = new List<Vector2>();
-
-            // ตรวจสอบ Cluster ของ Bubble ที่ชน
-            ExploreCluster(_currentBubblePosition, visited, toRemove);
-
-            // Debug: แสดงขนาดของ Cluster
-            System.Console.WriteLine($"Cluster size: {toRemove.Count}");
-
-            // ลบ Bubble หาก Cluster มีขนาดมากกว่า 3
-            if (toRemove.Count >= 3)
+            if (!_isBubbleFired)
             {
-                foreach (var bubble in toRemove)
-                {
-                    System.Console.WriteLine($"Removing bubble at position {bubble}");
-                    _grid.Remove(bubble);
-                }
-
-                _score += toRemove.Count * 10; // เพิ่มคะแนนตามจำนวน Bubble ที่ลบ
+                _isBubbleFired = true;
+                _bubbleDirection = new Vector2((float)Math.Sin(_fishRotation), -(float)Math.Cos(_fishRotation));
+                _currentBubblePosition = _fishPosition;
             }
         }
 
-
-        private void ExploreCluster(Vector2 start, HashSet<Vector2> visited, List<Vector2> cluster)
+        private void AttachBubbleToGrid(Vector2 bubblePosition, string color)
         {
-            var stack = new Stack<Vector2>();
-            stack.Push(FindClosest(start)); // หา Bubble ที่ใกล้ที่สุดใน Grid
+            Vector2 nearestBubble = FindClosestBubble(bubblePosition);
 
-            while (stack.Count > 0)
+            if (nearestBubble != Vector2.Zero)
             {
-                var current = stack.Pop();
+                Vector2 snappedPosition = GetNearestEmptyAdjacentPosition(nearestBubble);
 
-                if (visited.Contains(current))
-                    continue;
-
-                visited.Add(current);
-                cluster.Add(current);
-
-                // ตรวจสอบเพื่อนบ้าน
-                foreach (var neighbor in GetNeighbors(current))
+                if (!_bubbleGrid.ContainsKey(snappedPosition))
                 {
-                    if (!visited.Contains(neighbor))
-                    {
-                        stack.Push(neighbor);
-                    }
+                    _bubbleGrid[snappedPosition] = color;
+                    CheckMatches(snappedPosition, color);
                 }
             }
         }
 
-        private Vector2 FindClosest(Vector2 position)
+        private Vector2 FindClosestBubble(Vector2 position)
         {
             Vector2 closest = Vector2.Zero;
             float minDistance = float.MaxValue;
 
-            foreach (var bubble in _grid)
+            foreach (var bubble in _bubbleGrid.Keys)
             {
                 float distance = Vector2.Distance(position, bubble);
                 if (distance < minDistance)
@@ -164,17 +171,79 @@ namespace ProjectMidterm.States
             return closest;
         }
 
+        private Vector2 GetNearestEmptyAdjacentPosition(Vector2 basePosition)
+        {
+            Vector2[] directions = {
+                new Vector2(-_bubbleSize, 0),
+                new Vector2(_bubbleSize, 0),
+                new Vector2(0, -_bubbleSize),
+                new Vector2(0, _bubbleSize),
+                new Vector2(-_bubbleSize / 2, -_bubbleSize),
+                new Vector2(_bubbleSize / 2, -_bubbleSize)
+            };
+
+            foreach (var dir in directions)
+            {
+                Vector2 newPosition = basePosition + dir;
+                if (!_bubbleGrid.ContainsKey(newPosition))
+                {
+                    return newPosition;
+                }
+            }
+
+            return basePosition;
+        }
+
+        private void CheckMatches(Vector2 startPosition, string color)
+        {
+            HashSet<Vector2> matchedBubbles = new HashSet<Vector2>();
+
+            FindMatchingBubbles(startPosition, color, matchedBubbles);
+
+            if (matchedBubbles.Count >= 3)
+            {
+                foreach (var bubble in matchedBubbles)
+                {
+                    _bubbleGrid.Remove(bubble);
+                }
+
+                _score += matchedBubbles.Count * 10;
+            }
+        }
+
+        private void FindMatchingBubbles(Vector2 position, string color, HashSet<Vector2> matchedBubbles)
+        {
+            if (!_bubbleGrid.ContainsKey(position)) return;
+            if (matchedBubbles.Contains(position)) return;
+            if (_bubbleGrid[position] != color) return;
+
+            matchedBubbles.Add(position);
+
+            foreach (var neighbor in GetNeighbors(position))
+            {
+                FindMatchingBubbles(neighbor, color, matchedBubbles);
+            }
+        }
 
         private List<Vector2> GetNeighbors(Vector2 position)
         {
-            var neighbors = new List<Vector2>();
-            float threshold = 30f; // ปรับระยะให้เหมาะสมกับขนาด Bubble
+            List<Vector2> neighbors = new List<Vector2>();
 
-            foreach (var bubble in _grid)
+            Vector2[] directions = {
+                new Vector2(-_bubbleSize, 0),
+                new Vector2(_bubbleSize, 0),
+                new Vector2(0, -_bubbleSize),
+                new Vector2(0, _bubbleSize),
+                new Vector2(-_bubbleSize / 2, -_bubbleSize),
+                new Vector2(_bubbleSize / 2, -_bubbleSize)
+            };
+
+            foreach (var direction in directions)
             {
-                if (Vector2.Distance(bubble, position) < threshold && bubble != position)
+                Vector2 neighborPos = position + direction;
+                if (_bubbleGrid.ContainsKey(neighborPos))
                 {
-                    neighbors.Add(bubble);
+                    neighbors.Add(neighborPos);
                 }
             }
 
@@ -184,18 +253,37 @@ namespace ProjectMidterm.States
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, _graphicsDevice.Viewport.Width, _graphicsDevice.Viewport.Height), Color.White);
-            spriteBatch.Draw(_fish, _fishPosition, null, Color.White, _fishRotation,new Vector2(_fish.Width / 2, _fish.Height / 2), 0.2f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(_bubble, new Rectangle((int)_currentBubblePosition.X, (int)_currentBubblePosition.Y, 20, 20), Color.White);
 
-            foreach (var bubble in _grid)
+            spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, 800, 600), Color.White);
+
+            foreach (var bubble in _bubbleGrid)
             {
-                spriteBatch.Draw(_bubble, new Rectangle((int)bubble.X, (int)bubble.Y, 20, 20), Color.White);
+                spriteBatch.Draw(_bubbleTextures[_bubbleGrid[bubble.Key]], new Rectangle((int)bubble.Key.X, (int)bubble.Key.Y, _bubbleSize, _bubbleSize), Color.White);
+            }
+
+            spriteBatch.Draw(
+                _fishTexture,
+                _fishPosition,
+                null,
+                Color.White,
+                _fishRotation,
+                new Vector2(_fishTexture.Width / 2, _fishTexture.Height / 2),
+                0.3f,
+                SpriteEffects.None,
+                0f
+            );
+
+            if (_isBubbleFired)
+            {
+                spriteBatch.Draw(_bubbleTextures[_currentBubbleColor], new Rectangle((int)_currentBubblePosition.X, (int)_currentBubblePosition.Y, _bubbleSize, _bubbleSize), Color.White);
             }
 
             spriteBatch.DrawString(_content.Load<SpriteFont>("Gamefont"), $"Score: {_score}", new Vector2(10, 10), Color.White);
+            spriteBatch.Draw(_bubbleTextures[_currentBubbleColor],new Rectangle(380, 400, _bubbleSize, _bubbleSize), Color.White);
+            spriteBatch.Draw(_bubbleTextures[_nextBubbleColor],new Rectangle(440, 400, _bubbleSize / 2, _bubbleSize / 2),Color.White);
             spriteBatch.End();
         }
         public override void PostUpdate(GameTime gameTime) { }
+
     }
 }

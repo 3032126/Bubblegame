@@ -30,5 +30,13 @@ D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\fishbowl.xnb
 D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\goldfish.xnb
 D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\cat.xnb
 D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\pufferfish.xnb
-D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\bubble.xnb
 D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\fish.xnb
+D:\ProjectMidterm\ProjectMidterm\obj\Debug\net8.0\ProjectMidterm.sourcelink.json
+D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\Bubble_1.xnb
+D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\Bubble_2.xnb
+D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\Bubble_3.xnb
+D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\Bubble_4.xnb
+D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\Bubble_5.xnb
+D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\PokemonSoundtrack.ogg
+D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\PokemonSoundtrack.xnb
+D:\ProjectMidterm\ProjectMidterm\bin\Debug\net8.0\Content\Shootingeffect.xnb
