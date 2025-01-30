@@ -43,7 +43,7 @@ namespace ProjectMidterm.States
             _backgroundMusic = _content.Load<Song>("PokemonSoundtrack"); // โหลดเพลง
 
             MediaPlayer.IsRepeating = true; // ให้เพลงเล่นซ้ำ
-            MediaPlayer.Volume = 0.0f; // กำหนดความดังของเพลง
+            MediaPlayer.Volume = 0.1f; // กำหนดความดังของเพลง
             MediaPlayer.Play(_backgroundMusic); // เล่นเพลงพื้นหลัง
 
             _startButtonRect = new Rectangle(500, 120, 200, 50);

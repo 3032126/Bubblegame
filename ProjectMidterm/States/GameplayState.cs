@@ -31,7 +31,7 @@ namespace ProjectMidterm.States
         private Texture2D _handdownTexture;
         private Vector2 _handdownPosition;
         private float _timeSinceLastDrop;
-        private float _dropInterval = 60f; // 10 วินาที
+        private float _dropInterval = 10f; // 10 วินาที
         private int _dropDistance = 20; // ระยะที่ Bubble ขยับลงมาแต่ละครั้ง
 
         private bool _isGameOver = false;
@@ -409,8 +409,8 @@ namespace ProjectMidterm.States
             }
 
             spriteBatch.DrawString(_content.Load<SpriteFont>("Gamefont"), $"Score: {_score}", new Vector2(10, 10), Color.White);
-            spriteBatch.Draw(_bubbleTextures[_currentBubbleColor], new Rectangle(380, 400, _bubbleSize, _bubbleSize), Color.White);
-            spriteBatch.Draw(_bubbleTextures[_nextBubbleColor], new Rectangle(440, 400, _bubbleSize / 2, _bubbleSize / 2), Color.White);
+            spriteBatch.Draw(_bubbleTextures[_currentBubbleColor], new Rectangle(380, 400, 50, 50), Color.White);
+            spriteBatch.Draw(_bubbleTextures[_nextBubbleColor], new Rectangle(440, 400, 30, 30 ), Color.White);
 
             // แสดงข้อความ "Game Over" และวิธีเริ่มเกมใหม่
             if (_isGameOver)
