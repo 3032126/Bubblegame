@@ -25,18 +25,34 @@ namespace ProjectMidterm.States
         private int _score;
         private int _gridWidth = 8;
         private int _gridHeight = 10;
-        private int _bubbleSize = 25;
+        private int _bubbleSize = 32;
         private int _playAreaX = 200;  // ขอบซ้ายของพื้นที่เล่น
         private int _playAreaWidth = 400;  // กว้างของพื้นที่เล่น
+        private Texture2D _handdownTexture;
+        private Vector2 _handdownPosition;
+        private float _timeSinceLastDrop;
+        private float _dropInterval = 1f; // 10 วินาที
+        private int _dropDistance = 32; // ระยะที่ Bubble ขยับลงมาแต่ละครั้ง
+
+        private bool _isGameOver = false;
+        private SpriteFont _gameOverFont;
+        private GachaState _gacha; // ✅ Store reference to GachaState
+
 
         private SoundEffect _shootingSound; // เสียงยิงบับเบิ้ล
 
 
-        public GameplayState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content)
+        public GameplayState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content,GachaState gacha)
             : base(game, graphicsDevice, content)
         {
             _backgroundTexture = _content.Load<Texture2D>("bg");
             _fishTexture = _content.Load<Texture2D>("fish");
+            _handdownTexture = _content.Load<Texture2D>("Handdown");
+            _gameOverFont = _content.Load<SpriteFont>("Gamefont");
+
+
+            _handdownPosition = new Vector2(150, -500); // อยู่ตรงกลางบนสุดของจอ
+
 
             _bubbleTextures = new Dictionary<string, Texture2D>
             {
@@ -104,6 +120,15 @@ namespace ProjectMidterm.States
                 _fishRotation += 0.05f; 
 
 
+            _timeSinceLastDrop += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (_timeSinceLastDrop >= _dropInterval)
+            {
+                MoveBubblesDown();
+                _timeSinceLastDrop = 0f;
+            }
+
+
             _fishRotation = MathHelper.Clamp(_fishRotation, -MathHelper.ToRadians(85), MathHelper.ToRadians(85));
 
 
@@ -142,7 +167,34 @@ namespace ProjectMidterm.States
             }
         }
 
-        
+            private void MoveBubblesDown()
+            {
+                if (_isGameOver) return; // ถ้าเกมจบแล้วให้หยุดอัปเดต
+
+                Dictionary<Vector2, string> newGrid = new Dictionary<Vector2, string>();
+
+                foreach (var bubble in _bubbleGrid)
+                {
+                    Vector2 newPosition = new Vector2(bubble.Key.X, bubble.Key.Y + _dropDistance);
+                    newGrid[newPosition] = bubble.Value;
+                }
+
+                _bubbleGrid = newGrid;
+
+                // ขยับ Handdown ลงมา
+                _handdownPosition.Y += _dropDistance;
+
+                // ตรวจสอบว่า Bubble แตะปลาหรือยัง
+                foreach (var bubble in _bubbleGrid.Keys)
+                {
+                    if (bubble.Y >= _fishPosition.Y - _bubbleSize)
+                    {
+                        _isGameOver = true; // ตั้งค่า Game Over
+                    }
+                }
+            }
+
+
 
         private void FireBubble()
         {
@@ -270,28 +322,32 @@ namespace ProjectMidterm.States
             return neighbors;
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+       public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
 
             spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, 800, 600), Color.White);
 
-            // วาดกรอบสำหรับให้บับเบิ้ลชิ่ง
+            // วาดขอบเขตให้ Bubble ชิ่ง
             Texture2D boundary = new Texture2D(_graphicsDevice, 1, 1);
             boundary.SetData(new[] { Color.White });
+            spriteBatch.Draw(boundary, new Rectangle(_playAreaX - 5, 50, 5, 500), Color.Black);  
+            spriteBatch.Draw(boundary, new Rectangle(_playAreaX + _playAreaWidth, 50, 5, 500), Color.Black);
 
-            spriteBatch.Draw(boundary, new Rectangle(_playAreaX - 5, 50, 5, 500), Color.Black);  // ขอบซ้าย
-            spriteBatch.Draw(boundary, new Rectangle(_playAreaX + _playAreaWidth, 50, 5, 500), Color.Black);  // ขอบขวา
-
+            // วาดฟองอากาศทั้งหมด
             foreach (var bubble in _bubbleGrid)
             {
-                     spriteBatch.Draw(
-                        _bubbleTextures[_bubbleGrid[bubble.Key]],
-                        new Rectangle((int)bubble.Key.X, (int)bubble.Key.Y, (int)(_bubbleSize * 1.5f), (int)(_bubbleSize * 1.5f)), // ขยายขนาด
-                        Color.White
-                    );
-             }
+                spriteBatch.Draw(
+                    _bubbleTextures[bubble.Value],
+                    new Rectangle((int)bubble.Key.X, (int)bubble.Key.Y, (int)(_bubbleSize * 1.5f), (int)(_bubbleSize * 1.5f)),
+                    Color.White
+                );
+            }
 
+            // วาด Handdown
+            spriteBatch.Draw(_handdownTexture, _handdownPosition, Color.White);
+
+            // วาดปลาที่ยิง
             spriteBatch.Draw(
                 _fishTexture,
                 _fishPosition,
@@ -310,10 +366,20 @@ namespace ProjectMidterm.States
             }
 
             spriteBatch.DrawString(_content.Load<SpriteFont>("Gamefont"), $"Score: {_score}", new Vector2(10, 10), Color.White);
-            spriteBatch.Draw(_bubbleTextures[_currentBubbleColor],new Rectangle(380, 400, _bubbleSize, _bubbleSize), Color.White);
-            spriteBatch.Draw(_bubbleTextures[_nextBubbleColor],new Rectangle(440, 400, _bubbleSize / 2, _bubbleSize / 2),Color.White);
+            spriteBatch.Draw(_bubbleTextures[_currentBubbleColor], new Rectangle(380, 400, _bubbleSize, _bubbleSize), Color.White);
+            spriteBatch.Draw(_bubbleTextures[_nextBubbleColor], new Rectangle(440, 400, _bubbleSize / 2, _bubbleSize / 2), Color.White);
+
+            // แสดงข้อความ "Game Over" เมื่อแพ้
+            if (_isGameOver)
+            {
+                Vector2 textSize = _gameOverFont.MeasureString("GAME OVER");
+                Vector2 textPosition = new Vector2((800 - textSize.X) / 2, 250);
+                spriteBatch.DrawString(_gameOverFont, "GAME OVER", textPosition, Color.Red);
+            }
+
             spriteBatch.End();
         }
+
         public override void PostUpdate(GameTime gameTime) { }
 
     }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>D:/ProjectMidterm/ProjectMidterm/Content/PokemonSoundtrack.mp3</SourceFile>
-  <SourceTime>2025-01-29T14:49:06+07:00</SourceTime>
-  <DestFile>D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/PokemonSoundtrack.xnb</DestFile>
-  <DestTime>2025-01-29T20:49:56.5431601+07:00</DestTime>
+  <SourceFile>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/PokemonSoundtrack.mp3</SourceFile>
+  <SourceTime>2025-01-29T23:01:26.3869281+07:00</SourceTime>
+  <DestFile>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/bin/DesktopGL/PokemonSoundtrack.xnb</DestFile>
+  <DestTime>2025-01-30T22:24:31.1157324+07:00</DestTime>
   <Importer>Mp3Importer</Importer>
   <ImporterTime>2024-08-17T00:05:56+07:00</ImporterTime>
   <Processor>SongProcessor</Processor>
@@ -15,6 +15,6 @@
   <Dependencies />
   <BuildAsset />
   <BuildOutput>
-    <string>D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/PokemonSoundtrack.ogg</string>
+    <string>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/bin/DesktopGL/PokemonSoundtrack.ogg</string>
   </BuildOutput>
 </PipelineBuildEvent>

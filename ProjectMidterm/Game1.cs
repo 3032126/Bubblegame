@@ -9,6 +9,7 @@ namespace ProjectMidterm
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private GachaState _gachaState;
 
         private State _currentState;
         private State _nextState;
@@ -33,8 +34,11 @@ namespace ProjectMidterm
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _currentState = new MenuState(this, GraphicsDevice, Content);
+            _gachaState = new GachaState(this, GraphicsDevice, Content);
+            _currentState = new MenuState(this, GraphicsDevice, Content, _gachaState);
+
         }
+
 
         protected override void Update(GameTime gameTime)
         {

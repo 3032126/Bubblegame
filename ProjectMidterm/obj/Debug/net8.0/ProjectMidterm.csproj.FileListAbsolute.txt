@@ -82,3 +82,4 @@ a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\obj\Debug\net8.0\refint
 a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\obj\Debug\net8.0\ProjectMidterm.pdb
 a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\obj\Debug\net8.0\ProjectMidterm.genruntimeconfig.cache
 a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\obj\Debug\net8.0\ref\ProjectMidterm.dll
+a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\bin\Debug\net8.0\Content\Handdown.xnb

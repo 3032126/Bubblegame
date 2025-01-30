@@ -16,11 +16,13 @@
     <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/fishbowl.png</File>
     <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Gamefont.spritefont</File>
     <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/goldfish.png</File>
+    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Handdown.png</File>
     <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/PokemonSoundtrack.mp3</File>
     <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/pufferfish.png</File>
     <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Shootingeffect.wav</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
