@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio; // เพิ่มเพื่อใช้เสียงเอฟเฟกต์
 
 
 namespace ProjectMidterm.States
@@ -11,6 +13,8 @@ namespace ProjectMidterm.States
     {
         private Texture2D _backgroundTexture;
         private Texture2D _buttonTexture;
+        private Song _backgroundMusic; // เพลงพื้นหลัง
+
 
         private Rectangle _startButtonRect;
         private Rectangle _optionsButtonRect;
@@ -33,6 +37,11 @@ namespace ProjectMidterm.States
             _backgroundTexture = _content.Load<Texture2D>("bg");
             _buttonTexture = _content.Load<Texture2D>("button");
             _font = _content.Load<SpriteFont>("Gamefont");
+            _backgroundMusic = _content.Load<Song>("PokemonSoundtrack"); // โหลดเพลง
+
+            MediaPlayer.IsRepeating = true; // ให้เพลงเล่นซ้ำ
+            MediaPlayer.Volume = 0.1f; // กำหนดความดังของเพลง
+            MediaPlayer.Play(_backgroundMusic); // เล่นเพลงพื้นหลัง
 
             _startButtonRect = new Rectangle(500, 120, 200, 50);
             _optionsButtonRect = new Rectangle(500, 190, 200, 50);

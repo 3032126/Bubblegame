@@ -5,14 +5,21 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
 namespace ProjectMidterm.States
 {
     public class GameplayState : State
     {
         private Texture2D _backgroundTexture;
         private Dictionary<string, Texture2D> _bubbleTextures;
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> origin/main
         private Texture2D _fishTexture;
         private Vector2 _fishPosition;
         private float _fishRotation;
@@ -29,8 +36,14 @@ namespace ProjectMidterm.States
         private int _bubbleSize = 25;
         private int _playAreaX = 200;  // ขอบซ้ายของพื้นที่เล่น
         private int _playAreaWidth = 400;  // กว้างของพื้นที่เล่น
+<<<<<<< HEAD
         private GachaState _gacha;
         private SoundEffect _shootingSound; // เสียงยิงบับเบิ้ล
+=======
+
+        private SoundEffect _shootingSound; // เสียงยิงบับเบิ้ล
+
+>>>>>>> origin/main
 
         public GameplayState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, GachaState gacha)
         : base(game, graphicsDevice, content)
@@ -67,15 +80,24 @@ namespace ProjectMidterm.States
         private void GenerateInitialGrid()
         {
             string[] colors = { "bubble1", "bubble2", "bubble3", "bubble4", "bubble5" };
+<<<<<<< HEAD
             int startX = (800 - (_gridWidth * _bubbleSize)) / 2;
+=======
+            int startX = (800 - (_gridWidth * _bubbleSize)) / 2; // คำนวณจุดเริ่มให้บับเบิ้ลอยู่ตรงกลาง
+>>>>>>> origin/main
             for (int y = 0; y < 6; y++)
-            {
-                for (int x = 0; x < _gridWidth; x++)
                 {
+<<<<<<< HEAD
                     Vector2 position = new Vector2(startX + x * _bubbleSize, 50 + y * _bubbleSize);
                     _bubbleGrid[position] = colors[_random.Next(colors.Length)];
+=======
+                    for (int x = 0; x < _gridWidth; x++)
+                        {
+                             Vector2 position = new Vector2(startX + x * _bubbleSize, 50 + y * _bubbleSize);
+                            _bubbleGrid[position] = colors[_random.Next(colors.Length)];
+                        }
+>>>>>>> origin/main
                 }
-            }
         }
 
 
@@ -102,7 +124,11 @@ namespace ProjectMidterm.States
             if (state.IsKeyDown(Keys.Left))
                 _fishRotation -= 0.05f;
             if (state.IsKeyDown(Keys.Right))
-                _fishRotation += 0.05f;
+                _fishRotation += 0.05f; 
+
+
+            _fishRotation = MathHelper.Clamp(_fishRotation, -MathHelper.ToRadians(85), MathHelper.ToRadians(85));
+
 
 
             _fishRotation = MathHelper.Clamp(_fishRotation, -MathHelper.ToRadians(85), MathHelper.ToRadians(85));
@@ -128,21 +154,33 @@ namespace ProjectMidterm.States
                     }
                 }
 
+<<<<<<< HEAD
                 if (_currentBubblePosition.X < _playAreaX || _currentBubblePosition.X > (_playAreaX + _playAreaWidth))
                 {
                     _bubbleDirection.X *= -1;
                 }
+=======
+                 // **เพิ่มกำแพงชิ่งให้เฉพาะตรงกลาง**
+            if (_currentBubblePosition.X < _playAreaX || _currentBubblePosition.X > (_playAreaX + _playAreaWidth))
+            {
+                _bubbleDirection.X *= -1;
+            }
+>>>>>>> origin/main
 
-                if (_currentBubblePosition.Y < 50)
-                {
-                    AttachBubbleToGrid(_currentBubblePosition, _currentBubbleColor);
-                    _isBubbleFired = false;
-                    LoadNewBubble();
-                }
+            if (_currentBubblePosition.Y < 50)
+            {
+                AttachBubbleToGrid(_currentBubblePosition, _currentBubbleColor);
+                _isBubbleFired = false;
+                LoadNewBubble();
+            }
             }
         }
 
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> origin/main
 
         private void FireBubble()
         {
@@ -152,7 +190,11 @@ namespace ProjectMidterm.States
                 _bubbleDirection = new Vector2((float)Math.Sin(_fishRotation), -(float)Math.Cos(_fishRotation));
                 _currentBubblePosition = _fishPosition;
 
+<<<<<<< HEAD
                 _shootingSound.Play();
+=======
+                _shootingSound.Play(); // เล่นเสียงยิงบับเบิ้ล
+>>>>>>> origin/main
 
             }
         }
@@ -276,6 +318,10 @@ namespace ProjectMidterm.States
 
             spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, 800, 600), Color.White);
 
+<<<<<<< HEAD
+=======
+            // วาดกรอบสำหรับให้บับเบิ้ลชิ่ง
+>>>>>>> origin/main
             Texture2D boundary = new Texture2D(_graphicsDevice, 1, 1);
             boundary.SetData(new[] { Color.White });
 
@@ -284,12 +330,21 @@ namespace ProjectMidterm.States
 
             foreach (var bubble in _bubbleGrid)
             {
+<<<<<<< HEAD
                 spriteBatch.Draw(
                    _bubbleTextures[_bubbleGrid[bubble.Key]],
                    new Rectangle((int)bubble.Key.X, (int)bubble.Key.Y, (int)(_bubbleSize * 1.5f), (int)(_bubbleSize * 1.5f)), // ขยายขนาด
                    Color.White
                );
             }
+=======
+                     spriteBatch.Draw(
+                        _bubbleTextures[_bubbleGrid[bubble.Key]],
+                        new Rectangle((int)bubble.Key.X, (int)bubble.Key.Y, (int)(_bubbleSize * 1.5f), (int)(_bubbleSize * 1.5f)), // ขยายขนาด
+                        Color.White
+                    );
+             }
+>>>>>>> origin/main
 
             spriteBatch.Draw(
                 _fishTexture,
