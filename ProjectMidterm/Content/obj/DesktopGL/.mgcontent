@@ -14,6 +14,7 @@
     <File>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/cat.png</File>
     <File>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/fish.png</File>
     <File>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/fishbowl.png</File>
+    <File>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/FishEatCat.png</File>
     <File>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Gamefont.spritefont</File>
     <File>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/goldfish.png</File>
     <File>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Handdown.png</File>
@@ -22,6 +23,7 @@
     <File>A:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Shootingeffect.wav</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

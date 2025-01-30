@@ -31,8 +31,8 @@ namespace ProjectMidterm.States
         private Texture2D _handdownTexture;
         private Vector2 _handdownPosition;
         private float _timeSinceLastDrop;
-        private float _dropInterval = 1f; // 10 วินาที
-        private int _dropDistance = 32; // ระยะที่ Bubble ขยับลงมาแต่ละครั้ง
+        private float _dropInterval = 60f; // 10 วินาที
+        private int _dropDistance = 20; // ระยะที่ Bubble ขยับลงมาแต่ละครั้ง
 
         private bool _isGameOver = false;
         private SpriteFont _gameOverFont;
@@ -79,19 +79,26 @@ namespace ProjectMidterm.States
             LoadNewBubble();
         }
 
-        private void GenerateInitialGrid()
+       private void GenerateInitialGrid()
         {
             string[] colors = { "bubble1", "bubble2", "bubble3", "bubble4", "bubble5" };
-            int startX = (800 - (_gridWidth * _bubbleSize)) / 2; // คำนวณจุดเริ่มให้บับเบิ้ลอยู่ตรงกลาง
+            int startX = (800 - (_gridWidth * (_bubbleSize + 8))) / 2; // คำนวณจุดเริ่มให้บับเบิ้ลอยู่ตรงกลาง
+            int startY = 20; // ขยับขึ้นข้างบน 30px
+            int spacingX = _bubbleSize + 8; // ✅ เพิ่มระยะห่างแนวนอน 8px
+            int spacingY = _bubbleSize + 8; // ✅ เพิ่มระยะห่างแนวตั้ง 8px
+
             for (int y = 0; y < 6; y++)
+            {
+                for (int x = 0; x < _gridWidth; x++)
                 {
-                    for (int x = 0; x < _gridWidth; x++)
-                        {
-                             Vector2 position = new Vector2(startX + x * _bubbleSize, 50 + y * _bubbleSize);
-                            _bubbleGrid[position] = colors[_random.Next(colors.Length)];
-                        }
+                    Vector2 position = new Vector2(startX + x * spacingX, startY + y * spacingY);
+                    _bubbleGrid[position] = colors[_random.Next(colors.Length)];
                 }
+            }
         }
+
+
+
 
 
         private void LoadNewBubble()
@@ -110,62 +117,69 @@ namespace ProjectMidterm.States
             }
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            var state = Keyboard.GetState();
-
-            if (state.IsKeyDown(Keys.Left))
-                _fishRotation -= 0.05f;
-            if (state.IsKeyDown(Keys.Right))
-                _fishRotation += 0.05f; 
-
-
-            _timeSinceLastDrop += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (_timeSinceLastDrop >= _dropInterval)
+            public override void Update(GameTime gameTime)
             {
-                MoveBubblesDown();
-                _timeSinceLastDrop = 0f;
-            }
+                var state = Keyboard.GetState();
 
-
-            _fishRotation = MathHelper.Clamp(_fishRotation, -MathHelper.ToRadians(85), MathHelper.ToRadians(85));
-
-
-            if (!_isBubbleFired && state.IsKeyDown(Keys.Space))
-            {
-                FireBubble();
-            }
-
-            if (_isBubbleFired)
-            {
-                _currentBubblePosition += _bubbleDirection * 10f;
-
-                foreach (var position in _bubbleGrid.Keys)
+                // ถ้าเกมจบแล้ว ให้กด Enter เพื่อรีเซ็ตเกม
+                if (_isGameOver)
                 {
-                    if (Vector2.Distance(_currentBubblePosition, position) < _bubbleSize)
+                    if (state.IsKeyDown(Keys.Enter))
+                    {
+                        RestartGame();
+                    }
+                    return;
+                }
+
+                if (state.IsKeyDown(Keys.Left))
+                    _fishRotation -= 0.05f;
+                if (state.IsKeyDown(Keys.Right))
+                    _fishRotation += 0.05f; 
+
+                _timeSinceLastDrop += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (_timeSinceLastDrop >= _dropInterval)
+                {
+                    MoveBubblesDown();
+                    _timeSinceLastDrop = 0f;
+                }
+
+                _fishRotation = MathHelper.Clamp(_fishRotation, -MathHelper.ToRadians(85), MathHelper.ToRadians(85));
+
+                if (!_isBubbleFired && state.IsKeyDown(Keys.Space))
+                {
+                    FireBubble();
+                }
+
+                if (_isBubbleFired)
+                {
+                    _currentBubblePosition += _bubbleDirection * 10f;
+
+                    foreach (var position in _bubbleGrid.Keys)
+                    {
+                        if (Vector2.Distance(_currentBubblePosition, position) < _bubbleSize)
+                        {
+                            AttachBubbleToGrid(_currentBubblePosition, _currentBubbleColor);
+                            _isBubbleFired = false;
+                            LoadNewBubble();
+                            return;
+                        }
+                    }
+
+                    if (_currentBubblePosition.X < _playAreaX || _currentBubblePosition.X > (_playAreaX + _playAreaWidth))
+                    {
+                        _bubbleDirection.X *= -1;
+                    }
+
+                    if (_currentBubblePosition.Y < 50)
                     {
                         AttachBubbleToGrid(_currentBubblePosition, _currentBubbleColor);
                         _isBubbleFired = false;
                         LoadNewBubble();
-                        return;
                     }
                 }
-
-                 // **เพิ่มกำแพงชิ่งให้เฉพาะตรงกลาง**
-            if (_currentBubblePosition.X < _playAreaX || _currentBubblePosition.X > (_playAreaX + _playAreaWidth))
-            {
-                _bubbleDirection.X *= -1;
             }
 
-            if (_currentBubblePosition.Y < 50)
-            {
-                AttachBubbleToGrid(_currentBubblePosition, _currentBubbleColor);
-                _isBubbleFired = false;
-                LoadNewBubble();
-            }
-            }
-        }
 
             private void MoveBubblesDown()
             {
@@ -181,18 +195,18 @@ namespace ProjectMidterm.States
 
                 _bubbleGrid = newGrid;
 
-                // ขยับ Handdown ลงมา
-                _handdownPosition.Y += _dropDistance;
+                _handdownPosition.Y += _dropDistance; // ขยับ Handdown ลงมา
 
                 // ตรวจสอบว่า Bubble แตะปลาหรือยัง
                 foreach (var bubble in _bubbleGrid.Keys)
                 {
-                    if (bubble.Y >= _fishPosition.Y - _bubbleSize)
+                    if (bubble.Y >= _fishPosition.Y - _bubbleSize - 50)
                     {
                         _isGameOver = true; // ตั้งค่า Game Over
                     }
                 }
             }
+
 
 
 
@@ -209,6 +223,20 @@ namespace ProjectMidterm.States
             }
         }
 
+        private void RestartGame()
+        {
+            _isGameOver = false;
+            _score = 0;
+            _bubbleGrid.Clear();
+            _fishPosition = new Vector2(400, 450);
+            _handdownPosition = new Vector2(150, -500); // รีเซ็ตตำแหน่ง Handdown
+            _timeSinceLastDrop = 0f;
+            
+            GenerateInitialGrid();
+            LoadNewBubble();
+        }
+
+
         private void AttachBubbleToGrid(Vector2 bubblePosition, string color)
         {
             Vector2 nearestBubble = FindClosestBubble(bubblePosition);
@@ -216,6 +244,10 @@ namespace ProjectMidterm.States
             if (nearestBubble != Vector2.Zero)
             {
                 Vector2 snappedPosition = GetNearestEmptyAdjacentPosition(nearestBubble);
+
+                // ตรวจสอบให้ Bubble อยู่ภายในขอบของ Play Area เท่านั้น
+                if (snappedPosition.X < _playAreaX || snappedPosition.X > (_playAreaX + _playAreaWidth - _bubbleSize))
+                    return;
 
                 if (!_bubbleGrid.ContainsKey(snappedPosition))
                 {
@@ -225,7 +257,8 @@ namespace ProjectMidterm.States
             }
         }
 
-        private Vector2 FindClosestBubble(Vector2 position)
+
+       private Vector2 FindClosestBubble(Vector2 position)
         {
             Vector2 closest = Vector2.Zero;
             float minDistance = float.MaxValue;
@@ -243,15 +276,19 @@ namespace ProjectMidterm.States
             return closest;
         }
 
+
         private Vector2 GetNearestEmptyAdjacentPosition(Vector2 basePosition)
         {
+            int spacingX = _bubbleSize + 8; // ใช้ค่าระยะห่างแนวนอน
+            int spacingY = _bubbleSize + 8; // ใช้ค่าระยะห่างแนวตั้ง
+
             Vector2[] directions = {
-                new Vector2(-_bubbleSize, 0),
-                new Vector2(_bubbleSize, 0),
-                new Vector2(0, -_bubbleSize),
-                new Vector2(0, _bubbleSize),
-                new Vector2(-_bubbleSize / 2, -_bubbleSize),
-                new Vector2(_bubbleSize / 2, -_bubbleSize)
+                new Vector2(-spacingX, 0),
+                new Vector2(spacingX, 0),
+                new Vector2(0, -spacingY),
+                new Vector2(0, spacingY),
+                new Vector2(-spacingX / 2, -spacingY),
+                new Vector2(spacingX / 2, -spacingY)
             };
 
             foreach (var dir in directions)
@@ -266,6 +303,7 @@ namespace ProjectMidterm.States
             return basePosition;
         }
 
+
         private void CheckMatches(Vector2 startPosition, string color)
         {
             HashSet<Vector2> matchedBubbles = new HashSet<Vector2>();
@@ -276,12 +314,13 @@ namespace ProjectMidterm.States
             {
                 foreach (var bubble in matchedBubbles)
                 {
-                    _bubbleGrid.Remove(bubble);
+                    _bubbleGrid.Remove(bubble); // ✅ ลบ Bubble ที่ Match
                 }
 
-                _score += matchedBubbles.Count * 10;
+                _score += matchedBubbles.Count * 10; // ✅ เพิ่มคะแนน
             }
         }
+
 
         private void FindMatchingBubbles(Vector2 position, string color, HashSet<Vector2> matchedBubbles)
         {
@@ -301,13 +340,16 @@ namespace ProjectMidterm.States
         {
             List<Vector2> neighbors = new List<Vector2>();
 
+            int spacingX = _bubbleSize + 8; // ✅ ใช้ค่าระยะห่างแนวนอน
+            int spacingY = _bubbleSize + 8; // ✅ ใช้ค่าระยะห่างแนวตั้ง
+
             Vector2[] directions = {
-                new Vector2(-_bubbleSize, 0),
-                new Vector2(_bubbleSize, 0),
-                new Vector2(0, -_bubbleSize),
-                new Vector2(0, _bubbleSize),
-                new Vector2(-_bubbleSize / 2, -_bubbleSize),
-                new Vector2(_bubbleSize / 2, -_bubbleSize)
+                new Vector2(-spacingX, 0),  // ซ้าย
+                new Vector2(spacingX, 0),   // ขวา
+                new Vector2(0, -spacingY),  // บน
+                new Vector2(0, spacingY),   // ล่าง
+                new Vector2(-spacingX / 2, -spacingY), // ซ้ายบน
+                new Vector2(spacingX / 2, -spacingY)   // ขวาบน
             };
 
             foreach (var direction in directions)
@@ -321,6 +363,7 @@ namespace ProjectMidterm.States
 
             return neighbors;
         }
+
 
        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -369,16 +412,21 @@ namespace ProjectMidterm.States
             spriteBatch.Draw(_bubbleTextures[_currentBubbleColor], new Rectangle(380, 400, _bubbleSize, _bubbleSize), Color.White);
             spriteBatch.Draw(_bubbleTextures[_nextBubbleColor], new Rectangle(440, 400, _bubbleSize / 2, _bubbleSize / 2), Color.White);
 
-            // แสดงข้อความ "Game Over" เมื่อแพ้
+            // แสดงข้อความ "Game Over" และวิธีเริ่มเกมใหม่
             if (_isGameOver)
             {
                 Vector2 textSize = _gameOverFont.MeasureString("GAME OVER");
                 Vector2 textPosition = new Vector2((800 - textSize.X) / 2, 250);
                 spriteBatch.DrawString(_gameOverFont, "GAME OVER", textPosition, Color.Red);
+
+                Vector2 restartTextSize = _gameOverFont.MeasureString("Press Enter to Restart");
+                Vector2 restartTextPosition = new Vector2((800 - restartTextSize.X) / 2, 300);
+                spriteBatch.DrawString(_gameOverFont, "Press Enter to Restart", restartTextPosition, Color.White);
             }
 
             spriteBatch.End();
         }
+
 
         public override void PostUpdate(GameTime gameTime) { }
 
