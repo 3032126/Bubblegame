@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ProjectMidterm.States
 {
@@ -22,11 +23,10 @@ namespace ProjectMidterm.States
         private Rectangle _historyButtonRect;
         private Rectangle _menuButtonRect;
 
-        private Dictionary<string, Texture2D> _itemTextures;
+        private Dictionary<string, Texture2D> _fishSkins; // ✅ Fixed: Only one definition
         private List<string> _obtainedItems;
         private List<string> _currentRollItems;
         private int _currentItemIndex;
-        private Random _random;
 
         private bool _isRolling = false;
         private bool _isMouseClicked = false;
@@ -35,11 +35,16 @@ namespace ProjectMidterm.States
         private float _animationAlpha = 0f;
         private float _animationScale = 0.5f;
         private float _animationSpeed = 0.05f;
-        public Dictionary<string, Texture2D> ItemTextures => _itemTextures;
+        private GachaState _gacha;
+        public HashSet<string> UnlockedFish { get; private set; } = new HashSet<string>();
+        public string SelectedFish { get; private set; } = "Goldfish";
+        private Random _random;
+        private string[] fishPool = { "Goldfish", "Pufferfish", "Rare Fish", "Legendary Fish" };
 
         public GachaState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content)
             : base(game, graphicsDevice, content)
         {
+            _gacha = this;
             _backgroundTexture = _content.Load<Texture2D>("bg");
             _font = _content.Load<SpriteFont>("Gamefont");
             _fishbowlTexture = _content.Load<Texture2D>("fishbowl");
@@ -48,14 +53,14 @@ namespace ProjectMidterm.States
             _historyButtonTexture = _content.Load<Texture2D>("button");
             _menuButtonTexture = _content.Load<Texture2D>("button");
 
-            // Load item textures
-            _itemTextures = new Dictionary<string, Texture2D>
+            _fishSkins = new Dictionary<string, Texture2D>
             {
-                { "Goldfish", _content.Load<Texture2D>("goldfish") },
-                { "Pufferfish", _content.Load<Texture2D>("pufferfish") },
-                { "Rare Fish", _content.Load<Texture2D>("goldfish") },
-                { "Legendary Fish", _content.Load<Texture2D>("goldfish") }
+                { "Goldfish", content.Load<Texture2D>("goldfish") },
+                { "Pufferfish", content.Load<Texture2D>("pufferfish") },
+                { "Rare Fish", content.Load<Texture2D>("goldfish") },
+                { "Legendary Fish", content.Load<Texture2D>("goldfish") }
             };
+
             _random = new Random();
             _obtainedItems = new List<string>();
             _currentRollItems = new List<string>();
@@ -64,16 +69,17 @@ namespace ProjectMidterm.States
             _button10RollRect = new Rectangle(500, 380, 200, 50);
             _historyButtonRect = new Rectangle(680, 20, 50, 50);
             _menuButtonRect = new Rectangle(20, 20, 50, 50);
-
         }
 
         public override void Update(GameTime gameTime)
         {
             var mouseState = Mouse.GetState();
+
             if (mouseState.LeftButton == ButtonState.Pressed && _menuButtonRect.Contains(mouseState.Position))
             {
-                _game.ChangeState(new MenuState(_game, _graphicsDevice, _content)); // กลับไปที่ Menu
+                _game.ChangeState(new MenuState(_game, _graphicsDevice, _content, _gacha));
             }
+
             if (_isViewingHistory)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed && !_isMouseClicked)
@@ -86,11 +92,11 @@ namespace ProjectMidterm.States
             {
                 if (mouseState.LeftButton == ButtonState.Pressed && !_isMouseClicked)
                 {
-                    _isMouseClicked = true; 
-                    _currentItemIndex++; 
+                    _isMouseClicked = true;
+                    _currentItemIndex++;
 
-                    _animationAlpha = 0f; 
-                    _animationScale = 0.5f; 
+                    _animationAlpha = 0f;
+                    _animationScale = 0.5f;
 
                     if (_currentItemIndex >= _currentRollItems.Count)
                     {
@@ -106,18 +112,20 @@ namespace ProjectMidterm.States
 
                 if (_button1RollRect.Contains(mousePos))
                 {
-                    PerformRoll(1); 
+                    PerformRoll(1);
                 }
                 else if (_button10RollRect.Contains(mousePos))
                 {
-                    PerformRoll(10); 
+                    PerformRoll(10);
                 }
                 else if (_historyButtonRect.Contains(mousePos))
                 {
                     _isViewingHistory = true;
                 }
-                _isMouseClicked = true; 
+
+                _isMouseClicked = true;
             }
+
             if (mouseState.LeftButton == ButtonState.Released)
             {
                 _isMouseClicked = false;
@@ -128,14 +136,15 @@ namespace ProjectMidterm.States
                 _animationAlpha = MathHelper.Clamp(_animationAlpha + _animationSpeed, 0f, 1f);
                 _animationScale = MathHelper.Clamp(_animationScale + _animationSpeed, 0.5f, 1f);
             }
-       }
+        }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
+
             if (_isViewingHistory)
             {
-                spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, _graphicsDevice.Viewport.Width, _graphicsDevice.Viewport.Height), Color.White);
+                spriteBatch.Draw(_backgroundTexture, _graphicsDevice.Viewport.Bounds, Color.White);
                 spriteBatch.DrawString(_font, "Roll History:", new Vector2(345, 50), Color.Black);
 
                 Vector2 historyPosition = new Vector2(100, 100);
@@ -149,28 +158,24 @@ namespace ProjectMidterm.States
             }
             else
             {
-                    spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, _graphicsDevice.Viewport.Width, _graphicsDevice.Viewport.Height), Color.White);
-                    spriteBatch.Draw(_fishbowlTexture, new Rectangle(250, 50, 300, 300), Color.White);
-                    spriteBatch.DrawString(_font, "Welcome to Gacha Page!", new Vector2(300, 50), Color.Black);
-                    spriteBatch.Draw(_button1RollTexture, _button1RollRect, Color.White);
-                    spriteBatch.Draw(_button10RollTexture, _button10RollRect, Color.White);
-                    spriteBatch.Draw(_historyButtonTexture, _historyButtonRect, Color.White);
-                    spriteBatch.Draw(_menuButtonTexture, _menuButtonRect, Color.White);
-                    spriteBatch.DrawString(_font, "Home", new Vector2(_menuButtonRect.X + 7, _menuButtonRect.Y + 15), Color.Black);
-                    spriteBatch.DrawString(_font, "1 roll", new Vector2(_button1RollRect.X + 80, _button1RollRect.Y + 15), Color.Black);
-                    spriteBatch.DrawString(_font, "10 roll", new Vector2(_button10RollRect.X + 80, _button10RollRect.Y + 15), Color.Black);
-                    spriteBatch.DrawString(_font, "History", new Vector2(_historyButtonRect.X + 2, _historyButtonRect.Y + 15), Color.Black);
+                spriteBatch.Draw(_backgroundTexture, _graphicsDevice.Viewport.Bounds, Color.White);
+                spriteBatch.Draw(_fishbowlTexture, new Rectangle(250, 50, 300, 300), Color.White);
+                spriteBatch.DrawString(_font, "Welcome to Gacha Page!", new Vector2(300, 50), Color.Black);
+                spriteBatch.Draw(_button1RollTexture, _button1RollRect, Color.White);
+                spriteBatch.Draw(_button10RollTexture, _button10RollRect, Color.White);
+                spriteBatch.Draw(_historyButtonTexture, _historyButtonRect, Color.White);
+                spriteBatch.Draw(_menuButtonTexture, _menuButtonRect, Color.White);
 
                 if (_isRolling && _currentItemIndex < _currentRollItems.Count)
                 {
                     string currentItem = _currentRollItems[_currentItemIndex];
 
-                    if (_itemTextures.ContainsKey(currentItem))
+                    if (_fishSkins.ContainsKey(currentItem))
                     {
                         Vector2 origin = new Vector2(150, 150);
 
                         spriteBatch.Draw(
-                            _itemTextures[currentItem],
+                            _fishSkins[currentItem],
                             new Vector2(250, 80),
                             null,
                             Color.White * _animationAlpha,
@@ -181,13 +186,11 @@ namespace ProjectMidterm.States
                             0f
                         );
                     }
-                    spriteBatch.DrawString(_font, $"Roll: {_currentItemIndex + 1}", new Vector2(250, 400), Color.Black);
                 }
             }
 
             spriteBatch.End();
         }
-        public string LastRolledItem { get; private set; } = "";
 
         public void PerformRoll(int rollCount)
         {
@@ -206,12 +209,15 @@ namespace ProjectMidterm.States
                     cumulative += probabilities[j];
                     if (roll <= cumulative)
                     {
-                        _currentRollItems.Add(rewards[j]);
-                        _obtainedItems.Add(rewards[j]);
+                        string rolledFish = rewards[j];
+                        _currentRollItems.Add(rolledFish);
+                        _obtainedItems.Add(rolledFish);
 
-                        LastRolledItem = rewards[j];
-
-                        System.Console.WriteLine($"Rolled Fish: {LastRolledItem}");
+                        if (!UnlockedFish.Contains(rolledFish))
+                        {
+                            Debug.WriteLine($"New fish unlocked: {rolledFish}");
+                            UnlockedFish.Add(rolledFish);
+                        }
                         break;
                     }
                 }
@@ -219,12 +225,21 @@ namespace ProjectMidterm.States
 
             _isRolling = true;
             _currentItemIndex = 0;
-
             _animationAlpha = 0f;
             _animationScale = 0.5f;
         }
+        public void SelectFish(string fishType)
+        {
+            if (UnlockedFish.Contains(fishType))
+            {
+                SelectedFish = fishType;
+            }
+        }
+        public Texture2D GetFishTexture(string fishType)
+        {
+            return _fishSkins.ContainsKey(fishType) ? _fishSkins[fishType] : _fishSkins["Goldfish"];
+        }
 
         public override void PostUpdate(GameTime gameTime) { }
-
     }
 }

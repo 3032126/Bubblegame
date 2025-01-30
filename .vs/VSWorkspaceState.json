@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\ProjectMidterm"
+    "\\ProjectMidterm",
+    "\\ProjectMidterm\\Content",
+    "\\ProjectMidterm\\Gameobjects",
+    "\\ProjectMidterm\\States"
   ],
+  "SelectedNode": "\\ProjectMidterm\\Game1.cs",
   "PreviewInSolutionExplorer": false
 }
