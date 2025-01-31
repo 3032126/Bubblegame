@@ -4,23 +4,37 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/bg.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Bubble_1.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Bubble_2.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Bubble_3.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Bubble_4.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Bubble_5.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/button.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/cat.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/fish.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/fishbowl.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Gamefont.spritefont</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/goldfish.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/PokemonSoundtrack.mp3</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/pufferfish.png</File>
-    <File>a:/FishwarGame/CreamRepository/Bubblegame/ProjectMidterm/Content/Shootingeffect.wav</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/bg.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_1.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_2.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_3.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_4.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_5.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/button.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/cat.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/fish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/fishbowl.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Gamefont.spritefont</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/goldfish_shoot.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/goldfish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Handdown.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/legendary_fish_shoot.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/legendaryfish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/PokemonSoundtrack.mp3</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/pufferfish_shoot.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/pufferfish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/rarefish_shoot.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/rarefish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Shootingeffect.wav</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

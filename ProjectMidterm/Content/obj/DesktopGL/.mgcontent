@@ -15,12 +15,26 @@
     <File>D:/ProjectMidterm/ProjectMidterm/Content/fish.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/fishbowl.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/Gamefont.spritefont</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/goldfish_shoot.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/goldfish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/Handdown.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/legendary_fish_shoot.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/legendaryfish.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/PokemonSoundtrack.mp3</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/pufferfish_shoot.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/pufferfish.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/rarefish_shoot.png</File>
+    <File>D:/ProjectMidterm/ProjectMidterm/Content/rarefish.png</File>
     <File>D:/ProjectMidterm/ProjectMidterm/Content/Shootingeffect.wav</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

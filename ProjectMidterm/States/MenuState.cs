@@ -39,6 +39,8 @@ namespace ProjectMidterm.States
             _font = _content.Load<SpriteFont>("Gamefont");
             _backgroundMusic = _content.Load<Song>("PokemonSoundtrack"); // โหลดเพลง
 
+            MediaPlayer.Volume = OptionsState.GetSavedMusicVolume(); // ✅ ใช้ค่าที่บันทึกไว้
+
             MediaPlayer.IsRepeating = true; // ให้เพลงเล่นซ้ำ
             MediaPlayer.Volume = 0.1f; // กำหนดความดังของเพลง
             MediaPlayer.Play(_backgroundMusic); // เล่นเพลงพื้นหลัง
@@ -49,6 +51,12 @@ namespace ProjectMidterm.States
             _fishSelectionButtonRect = new Rectangle(500, 330, 200, 50);
             _exitButtonRect = new Rectangle(500, 400, 200, 50);
 
+            MediaPlayer.IsRepeating = true;
+
+            // ✅ ใช้ค่าที่ผู้เล่นตั้งไว้จาก OptionsState
+            MediaPlayer.Volume = OptionsState.GetSavedMusicVolume();
+
+            MediaPlayer.Play(_backgroundMusic);
         }
 
         public override void Update(GameTime gameTime)
@@ -66,7 +74,7 @@ namespace ProjectMidterm.States
                 }
                 else if (_optionsButtonRect.Contains(mousePosition))
                 {
-                    //_game.ChangeState(new OptionsState(_game, _graphicsDevice, _content));
+                    _game.ChangeState(new OptionsState(_game, _graphicsDevice, _content, _gacha));
                 }
                 else if (_gachaButtonRect.Contains(mousePosition))
                 {
