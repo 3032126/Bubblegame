@@ -15,8 +15,6 @@ namespace ProjectMidterm.States
         private Texture2D _buttonTexture;
         private Song _backgroundMusic; // เพลงพื้นหลัง
 
-        private Texture2D _Logo;
-
 
         private Rectangle _startButtonRect;
         private Rectangle _optionsButtonRect;
@@ -39,8 +37,9 @@ namespace ProjectMidterm.States
             _backgroundTexture = _content.Load<Texture2D>("bg");
             _buttonTexture = _content.Load<Texture2D>("button");
             _font = _content.Load<SpriteFont>("Gamefont");
-            _Logo = _content.Load<Texture2D>("FishEatCat");
             _backgroundMusic = _content.Load<Song>("PokemonSoundtrack"); // โหลดเพลง
+
+            MediaPlayer.Volume = OptionsState.GetSavedMusicVolume(); // ✅ ใช้ค่าที่บันทึกไว้
 
             MediaPlayer.IsRepeating = true; // ให้เพลงเล่นซ้ำ
             MediaPlayer.Volume = 0.1f; // กำหนดความดังของเพลง
@@ -52,6 +51,12 @@ namespace ProjectMidterm.States
             _fishSelectionButtonRect = new Rectangle(500, 330, 200, 50);
             _exitButtonRect = new Rectangle(500, 400, 200, 50);
 
+            MediaPlayer.IsRepeating = true;
+
+            // ✅ ใช้ค่าที่ผู้เล่นตั้งไว้จาก OptionsState
+            MediaPlayer.Volume = OptionsState.GetSavedMusicVolume();
+
+            MediaPlayer.Play(_backgroundMusic);
         }
 
         public override void Update(GameTime gameTime)
@@ -67,9 +72,10 @@ namespace ProjectMidterm.States
                 {
                     _game.ChangeState(new GameplayState(_game, _graphicsDevice, _content, _gacha));
                 }
+
                 else if (_optionsButtonRect.Contains(mousePosition))
                 {
-                    //_game.ChangeState(new OptionsState(_game, _graphicsDevice, _content));
+                    _game.ChangeState(new OptionsState(_game, _graphicsDevice, _content, _gacha));
                 }
                 else if (_gachaButtonRect.Contains(mousePosition))
                 {
@@ -97,11 +103,6 @@ namespace ProjectMidterm.States
             spriteBatch.Begin();
 
             spriteBatch.Draw(_backgroundTexture, _graphicsDevice.Viewport.Bounds, Color.White);
-            // กำหนดตำแหน่งของ Logo (ซ้ายมือของปุ่ม)
-            Vector2 logoPosition = new Vector2(_startButtonRect.X - _Logo.Width - 10, _startButtonRect.Y);
-
-            // วาดโลโก้ให้อยู่ด้านซ้ายของปุ่ม
-            spriteBatch.Draw(_Logo, logoPosition, Color.White);
 
             DrawButton(spriteBatch, _startButtonRect, "Start");
             DrawButton(spriteBatch, _optionsButtonRect, "Options");

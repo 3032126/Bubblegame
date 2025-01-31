@@ -23,7 +23,10 @@ namespace ProjectMidterm.States
         private Rectangle _historyButtonRect;
         private Rectangle _menuButtonRect;
 
-        private Dictionary<string, Texture2D> _fishSkins; // ✅ Fixed: Only one definition
+        private Dictionary<string, Texture2D> _fishSkins;
+        private Dictionary<string, Texture2D> _fishShootSkins;
+
+        public string SelectedFish { get; private set; } = "Goldfish";
         private List<string> _obtainedItems;
         private List<string> _currentRollItems;
         private int _currentItemIndex;
@@ -37,7 +40,6 @@ namespace ProjectMidterm.States
         private float _animationSpeed = 0.05f;
         private GachaState _gacha;
         public HashSet<string> UnlockedFish { get; private set; } = new HashSet<string>();
-        public string SelectedFish { get; private set; } = "Goldfish";
         private Random _random;
         private string[] fishPool = { "Goldfish", "Pufferfish", "Rare Fish", "Legendary Fish" };
 
@@ -57,10 +59,16 @@ namespace ProjectMidterm.States
             {
                 { "Goldfish", content.Load<Texture2D>("goldfish") },
                 { "Pufferfish", content.Load<Texture2D>("pufferfish") },
-                { "Rare Fish", content.Load<Texture2D>("goldfish") },
-                { "Legendary Fish", content.Load<Texture2D>("goldfish") }
+                { "Rare Fish", content.Load<Texture2D>("rarefish") },
+                { "Legendary Fish", content.Load<Texture2D>("legendaryfish") }
             };
-
+            _fishShootSkins = new Dictionary<string, Texture2D>
+            {
+            { "Goldfish", content.Load<Texture2D>("goldfish_shoot") },
+            { "Pufferfish", content.Load<Texture2D>("pufferfish_shoot") },
+            { "Rare Fish", content.Load<Texture2D>("rarefish_shoot") },
+            { "Legendary Fish", content.Load<Texture2D>("legendary_fish_shoot") }
+            };
             _random = new Random();
             _obtainedItems = new List<string>();
             _currentRollItems = new List<string>();
@@ -230,7 +238,7 @@ namespace ProjectMidterm.States
         }
         public void SelectFish(string fishType)
         {
-            if (UnlockedFish.Contains(fishType))
+            if (_fishShootSkins.ContainsKey(fishType))
             {
                 SelectedFish = fishType;
             }
@@ -239,7 +247,10 @@ namespace ProjectMidterm.States
         {
             return _fishSkins.ContainsKey(fishType) ? _fishSkins[fishType] : _fishSkins["Goldfish"];
         }
-
+        public Texture2D GetFishShootTexture()
+        {
+            return _fishShootSkins.ContainsKey(SelectedFish) ? _fishShootSkins[SelectedFish] : _fishShootSkins["Goldfish"];
+        }
         public override void PostUpdate(GameTime gameTime) { }
     }
 }

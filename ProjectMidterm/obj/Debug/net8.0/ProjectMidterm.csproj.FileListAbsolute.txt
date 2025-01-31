@@ -84,3 +84,9 @@ a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\obj\Debug\net8.0\Projec
 a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\obj\Debug\net8.0\ref\ProjectMidterm.dll
 a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\bin\Debug\net8.0\Content\Handdown.xnb
 a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\bin\Debug\net8.0\Content\FishEatCat.xnb
+a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\bin\Debug\net8.0\Content\goldfish_shoot.xnb
+a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\bin\Debug\net8.0\Content\legendaryfish.xnb
+a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\bin\Debug\net8.0\Content\legendary_fish_shoot.xnb
+a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\bin\Debug\net8.0\Content\pufferfish_shoot.xnb
+a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\bin\Debug\net8.0\Content\rarefish.xnb
+a:\FishwarGame\CreamRepository\Bubblegame\ProjectMidterm\bin\Debug\net8.0\Content\rarefish_shoot.xnb
