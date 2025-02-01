@@ -17,6 +17,17 @@ namespace ProjectMidterm.States
         private Texture2D _button10RollTexture;
         private Texture2D _historyButtonTexture;
         private Texture2D _menuButtonTexture;
+        private Texture2D _catHandTexture;
+        private Texture2D _gachaTexture;
+
+        private Vector2 _catHandPosition;
+        private float _catHandScale = 0.5f; 
+        private float _catHandSpeed = 2.5f;
+        private Vector2 _catHandStartPosition;
+        private Vector2 _catHandTargetPosition;
+        private bool _isHandMovingDown = false;
+        private bool _isHandMovingUp = false;
+        private bool _handReachedBowl = false;
 
         private Rectangle _button1RollRect;
         private Rectangle _button10RollRect;
@@ -54,6 +65,13 @@ namespace ProjectMidterm.States
             _button10RollTexture = _content.Load<Texture2D>("button");
             _historyButtonTexture = _content.Load<Texture2D>("button");
             _menuButtonTexture = _content.Load<Texture2D>("button");
+            _gachaTexture = _content.Load<Texture2D>("GACHA_SKINS");
+
+            _catHandTexture = _content.Load<Texture2D>("cat_hand");
+            _catHandStartPosition = new Vector2(300, -50);
+            _catHandTargetPosition = new Vector2(300, 120);
+            _catHandPosition = _catHandStartPosition;
+
 
             _fishSkins = new Dictionary<string, Texture2D>
             {
@@ -64,21 +82,21 @@ namespace ProjectMidterm.States
             };
             _fishShootSkins = new Dictionary<string, Texture2D>
             {
-            { "Goldfish", content.Load<Texture2D>("goldfish_shoot") },
-            { "Pufferfish", content.Load<Texture2D>("pufferfish_shoot") },
-            { "Rare Fish", content.Load<Texture2D>("rarefish_shoot") },
-            { "Legendary Fish", content.Load<Texture2D>("legendary_fish_shoot") }
+                { "Goldfish", content.Load<Texture2D>("goldfish_shoot") },
+                { "Pufferfish", content.Load<Texture2D>("pufferfish_shoot") },
+                { "Rare Fish", content.Load<Texture2D>("rarefish_shoot") },
+                { "Legendary Fish", content.Load<Texture2D>("legendary_fish_shoot") }
             };
+
             _random = new Random();
             _obtainedItems = new List<string>();
             _currentRollItems = new List<string>();
 
             _button1RollRect = new Rectangle(100, 380, 200, 50);
             _button10RollRect = new Rectangle(500, 380, 200, 50);
-            _historyButtonRect = new Rectangle(680, 20, 50, 50);
+            _historyButtonRect = new Rectangle(730, 20, 50, 50);
             _menuButtonRect = new Rectangle(20, 20, 50, 50);
         }
-
         public override void Update(GameTime gameTime)
         {
             var mouseState = Mouse.GetState();
@@ -86,6 +104,11 @@ namespace ProjectMidterm.States
             if (mouseState.LeftButton == ButtonState.Pressed && _menuButtonRect.Contains(mouseState.Position))
             {
                 _game.ChangeState(new MenuState(_game, _graphicsDevice, _content, _gacha));
+            }
+            if (_handReachedBowl && !_isRolling)
+            {
+                _isHandMovingUp = true;
+                _handReachedBowl = false;
             }
 
             if (_isViewingHistory)
@@ -96,7 +119,7 @@ namespace ProjectMidterm.States
                     _isViewingHistory = false;
                 }
             }
-            else if (_isRolling)
+            else if (_isRolling && _currentItemIndex < _currentRollItems.Count)
             {
                 if (mouseState.LeftButton == ButtonState.Pressed && !_isMouseClicked)
                 {
@@ -112,6 +135,26 @@ namespace ProjectMidterm.States
                         _currentRollItems.Clear();
                         _currentItemIndex = 0;
                     }
+                }
+                _animationAlpha = MathHelper.Clamp(_animationAlpha + _animationSpeed, 0f, 1f);
+                _animationScale = MathHelper.Clamp(_animationScale + _animationSpeed, 0.5f, 1f);
+            }
+
+            if (_isHandMovingDown)
+            {
+                _catHandPosition.Y += _catHandSpeed;
+                if (_catHandPosition.Y >= _catHandTargetPosition.Y)
+                {
+                    _isHandMovingDown = false;
+                    _handReachedBowl = true;
+                }
+            }
+            else if (_isHandMovingUp)
+            {
+                _catHandPosition.Y -= _catHandSpeed;
+                if (_catHandPosition.Y <= _catHandStartPosition.Y)
+                {
+                    _isHandMovingUp = false;
                 }
             }
             else if (mouseState.LeftButton == ButtonState.Pressed && !_isMouseClicked)
@@ -145,7 +188,6 @@ namespace ProjectMidterm.States
                 _animationScale = MathHelper.Clamp(_animationScale + _animationSpeed, 0.5f, 1f);
             }
         }
-
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
@@ -154,7 +196,6 @@ namespace ProjectMidterm.States
             {
                 spriteBatch.Draw(_backgroundTexture, _graphicsDevice.Viewport.Bounds, Color.White);
                 spriteBatch.DrawString(_font, "Roll History:", new Vector2(345, 50), Color.Black);
-
                 Vector2 historyPosition = new Vector2(100, 100);
                 foreach (var item in _obtainedItems)
                 {
@@ -167,10 +208,23 @@ namespace ProjectMidterm.States
             else
             {
                 spriteBatch.Draw(_backgroundTexture, _graphicsDevice.Viewport.Bounds, Color.White);
-                spriteBatch.Draw(_fishbowlTexture, new Rectangle(250, 50, 300, 300), Color.White);
-                spriteBatch.DrawString(_font, "Welcome to Gacha Page!", new Vector2(300, 50), Color.Black);
-                spriteBatch.Draw(_button1RollTexture, _button1RollRect, Color.White);
-                spriteBatch.Draw(_button10RollTexture, _button10RollRect, Color.White);
+                spriteBatch.Draw(
+                    _catHandTexture,
+                    _catHandPosition,
+                    null,
+                    Color.White,
+                    0f,
+                    new Vector2(_catHandTexture.Width / 4, _catHandTexture.Height / 4),
+                    _catHandScale,
+                    SpriteEffects.None,
+                    0f
+                );
+                spriteBatch.Draw(_fishbowlTexture, new Rectangle(170, 50, 450, 450), Color.White);
+                //spriteBatch.DrawString(_font, "Welcome to Gacha Page!", new Vector2(300, 50), Color.Black);
+                DrawButton(spriteBatch, _button1RollRect, "1 Roll");
+                DrawButton(spriteBatch, _button10RollRect, "10 Rolls");
+                spriteBatch.Draw(_gachaTexture, new Rectangle(263, -95, 280, 280), Color.White);
+
                 spriteBatch.Draw(_historyButtonTexture, _historyButtonRect, Color.White);
                 spriteBatch.Draw(_menuButtonTexture, _menuButtonRect, Color.White);
 
@@ -202,6 +256,9 @@ namespace ProjectMidterm.States
 
         public void PerformRoll(int rollCount)
         {
+            _isHandMovingDown = true;
+            _isHandMovingUp = false;
+            _catHandPosition = _catHandStartPosition;
             List<string> rewards = new List<string> { "Goldfish", "Pufferfish", "Rare Fish", "Legendary Fish" };
             List<int> probabilities = new List<int> { 60, 30, 9, 1 };
 
@@ -242,6 +299,19 @@ namespace ProjectMidterm.States
             {
                 SelectedFish = fishType;
             }
+        }
+        private void DrawButton(SpriteBatch spriteBatch, Rectangle rect, string text)
+        {
+            spriteBatch.Draw(_button1RollTexture, rect, Color.White);
+            spriteBatch.Draw(_button10RollTexture, rect, Color.White);
+
+            Vector2 textSize = _font.MeasureString(text);
+            Vector2 textPosition = new Vector2(
+                rect.X + (rect.Width - textSize.X) / 2,
+                rect.Y + (rect.Height - textSize.Y) / 2
+            );
+
+            spriteBatch.DrawString(_font, text, textPosition, Color.Black);
         }
         public Texture2D GetFishTexture(string fishType)
         {

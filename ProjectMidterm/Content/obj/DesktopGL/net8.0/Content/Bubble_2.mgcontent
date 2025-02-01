@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>D:/ProjectMidterm/ProjectMidterm/Content/Bubble_2.png</SourceFile>
-  <SourceTime>2025-01-29T13:54:04+07:00</SourceTime>
-  <DestFile>D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/Content/Bubble_2.xnb</DestFile>
-  <DestTime>2025-01-31T16:21:52.7289626+07:00</DestTime>
+  <SourceFile>D:/1/Bubblegame/ProjectMidterm/Content/Bubble_2.png</SourceFile>
+  <SourceTime>2025-01-31T19:49:38.6162222+07:00</SourceTime>
+  <DestFile>D:/1/Bubblegame/ProjectMidterm/Content/bin/DesktopGL/Content/Bubble_2.xnb</DestFile>
+  <DestTime>2025-01-31T20:04:10.351162+07:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-17T00:05:56+07:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

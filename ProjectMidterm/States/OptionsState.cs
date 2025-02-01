@@ -18,10 +18,11 @@ namespace ProjectMidterm.States
         private Texture2D _pixelTexture;
         private GachaState _gacha;
 
-        private static float _savedMusicVolume = 1.0f; // ค่าเริ่มต้นคือ 100%
-        private static float _savedSfxVolume = 1.0f; // ค่าเริ่มต้นคือ 100%
+        private static float _savedMusicVolume = 1.0f;
+        private static float _savedSfxVolume = 1.0f;
         private int _musicVolume;
         private int _sfxVolume;
+
 
         public OptionsState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, GachaState gacha)
             : base(game, graphicsDevice, content)
@@ -39,6 +40,7 @@ namespace ProjectMidterm.States
 
             _musicVolume = (int)(_savedMusicVolume * 100);
             _sfxVolume = (int)(_savedSfxVolume * 100);
+
         }
 
         public override void Update(GameTime gameTime)
@@ -99,7 +101,6 @@ namespace ProjectMidterm.States
 
         public override void PostUpdate(GameTime gameTime) { }
 
-        // ✅ เพิ่มเมทอดสำหรับดึงค่าที่บันทึกไว้
         public static float GetSavedMusicVolume()
         {
             return _savedMusicVolume;

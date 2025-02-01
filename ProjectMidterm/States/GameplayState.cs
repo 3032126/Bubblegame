@@ -23,25 +23,31 @@ namespace ProjectMidterm.States
         private string _nextBubbleColor;
         private Random _random;
         private int _score;
+        // กำหนดขนาดของ Grid
         private int _gridWidth = 8;
-        private int _gridHeight = 10;
+        private int _gridHeight = 5;
         private int _bubbleSize = 32;
-        private int _playAreaX = 200;  // ขอบซ้ายของพื้นที่เล่น
-        private int _playAreaWidth = 400;  // กว้างของพื้นที่เล่น
+        private int _spacing = 8; // เพิ่มระยะห่างของ Bubble
+
+        // คำนวณขอบของ Play Area
+        private int _playAreaX;  // ตำแหน่ง X ของ Play Area
+        private int _playAreaWidth;  // ความกว้างของ Play Area
+
         private Texture2D _handdownTexture;
         private Vector2 _handdownPosition;
         private float _timeSinceLastDrop;
-        private float _dropInterval = 5f; // 10 วินาที
-        private int _dropDistance = 32; // ระยะที่ Bubble ขยับลงมาแต่ละครั้ง
+        private float _dropInterval = 10f; // 10 วินาที
+        private int _dropDistance = 20; // ระยะที่ Bubble ขยับลงมาแต่ละครั้ง
 
         private bool _isGameOver = false;
         private SpriteFont _gameOverFont;
-        private GachaState _gacha;
+        private GachaState _gacha; // ✅ Store reference to GachaState
+        private Texture2D _menuButtonTexture;
+
+        private Rectangle _menuButtonRect;
 
         private SoundEffect _shootingSound; // เสียงยิงบับเบิ้ล
 
-        private Rectangle _menuButtonRect;
-        private Texture2D _menuButtonTexture;
 
         public GameplayState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, GachaState gacha)
             : base(game, graphicsDevice, content)
@@ -54,7 +60,6 @@ namespace ProjectMidterm.States
             _menuButtonTexture = _content.Load<Texture2D>("button");
 
             _menuButtonRect = new Rectangle(20, 20, 50, 50);
-
 
             _handdownPosition = new Vector2(150, -500); // อยู่ตรงกลางบนสุดของจอ
 
@@ -84,36 +89,72 @@ namespace ProjectMidterm.States
             LoadNewBubble();
         }
 
+        private void CalculatePlayAreaBounds()
+
+        {
+            // คำนวณขอบของพื้นที่เล่นให้พอดีกับ Bubble Grid
+            _playAreaWidth = (_gridWidth * (_bubbleSize + _spacing)) - _spacing;
+            _playAreaX = (800 - _playAreaWidth) / 2; // ตรงกลางจอ
+        }
+
+
         private void GenerateInitialGrid()
         {
             string[] colors = { "bubble1", "bubble2", "bubble3", "bubble4", "bubble5" };
-            int startX = (800 - (_gridWidth * _bubbleSize)) / 2; // คำนวณจุดเริ่มให้บับเบิ้ลอยู่ตรงกลาง
-            for (int y = 0; y < 6; y++)
+
+            CalculatePlayAreaBounds(); // ✅ คำนวณขอบ Play Area ก่อน
+
+            int startX = _playAreaX; // ✅ เริ่มที่ขอบซ้ายของ Play Area
+            int startY = 50; // ✅ จุดเริ่มต้นของ Bubble Grid
+
+            for (int y = 0; y < _gridHeight; y++)
             {
                 for (int x = 0; x < _gridWidth; x++)
                 {
-                    Vector2 position = new Vector2(startX + x * _bubbleSize, 50 + y * _bubbleSize);
+                    Vector2 position = new Vector2(startX + x * (_bubbleSize + _spacing), startY + y * (_bubbleSize + _spacing));
                     _bubbleGrid[position] = colors[_random.Next(colors.Length)];
                 }
             }
         }
 
 
+
+
+
+
         private void LoadNewBubble()
         {
-            string[] colors = { "bubble1", "bubble2", "bubble3", "bubble4", "bubble5" };
+            HashSet<string> availableColors = new HashSet<string>();
 
+            // ✅ ตรวจสอบว่าสีใดบ้างที่ยังคงอยู่ใน Map
+            foreach (var bubble in _bubbleGrid.Values)
+            {
+                availableColors.Add(bubble);
+            }
+
+            // ✅ ถ้าไม่มี Bubble ใน Map แล้ว ให้คืนค่าเป็นสีปกติทั้งหมด
+            if (availableColors.Count == 0)
+            {
+                availableColors = new HashSet<string> { "bubble1", "bubble2", "bubble3", "bubble4", "bubble5" };
+            }
+
+            // ✅ แปลง HashSet ให้เป็น Array เพื่อให้สามารถ Random ได้
+            string[] availableColorsArray = new string[availableColors.Count];
+            availableColors.CopyTo(availableColorsArray);
+
+            // ✅ เลือกสีของ Bubble ที่จะยิงจากสีที่มีอยู่ใน Map เท่านั้น
             if (string.IsNullOrEmpty(_currentBubbleColor))
             {
-                _currentBubbleColor = colors[_random.Next(colors.Length)];
-                _nextBubbleColor = colors[_random.Next(colors.Length)];
+                _currentBubbleColor = availableColorsArray[_random.Next(availableColorsArray.Length)];
+                _nextBubbleColor = availableColorsArray[_random.Next(availableColorsArray.Length)];
             }
             else
             {
                 _currentBubbleColor = _nextBubbleColor;
-                _nextBubbleColor = colors[_random.Next(colors.Length)];
+                _nextBubbleColor = availableColorsArray[_random.Next(availableColorsArray.Length)];
             }
         }
+
 
         public override void Update(GameTime gameTime)
         {
@@ -124,11 +165,20 @@ namespace ProjectMidterm.States
             {
                 _game.ChangeState(new MenuState(_game, _graphicsDevice, _content, _gacha));
             }
+            // ถ้าเกมจบแล้ว ให้กด Enter เพื่อรีเซ็ตเกม
+            if (_isGameOver)
+            {
+                if (state.IsKeyDown(Keys.Enter))
+                {
+                    RestartGame();
+                }
+                return;
+            }
+
             if (state.IsKeyDown(Keys.Left))
                 _fishRotation -= 0.05f;
             if (state.IsKeyDown(Keys.Right))
                 _fishRotation += 0.05f;
-
 
             _timeSinceLastDrop += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -138,9 +188,7 @@ namespace ProjectMidterm.States
                 _timeSinceLastDrop = 0f;
             }
 
-
             _fishRotation = MathHelper.Clamp(_fishRotation, -MathHelper.ToRadians(85), MathHelper.ToRadians(85));
-
 
             if (!_isBubbleFired && state.IsKeyDown(Keys.Space))
             {
@@ -162,7 +210,6 @@ namespace ProjectMidterm.States
                     }
                 }
 
-                // **เพิ่มกำแพงชิ่งให้เฉพาะตรงกลาง**
                 if (_currentBubblePosition.X < _playAreaX || _currentBubblePosition.X > (_playAreaX + _playAreaWidth))
                 {
                     _bubbleDirection.X *= -1;
@@ -176,6 +223,7 @@ namespace ProjectMidterm.States
                 }
             }
         }
+
 
         private void MoveBubblesDown()
         {
@@ -191,18 +239,18 @@ namespace ProjectMidterm.States
 
             _bubbleGrid = newGrid;
 
-            // ขยับ Handdown ลงมา
-            _handdownPosition.Y += _dropDistance;
+            _handdownPosition.Y += _dropDistance; // ขยับ Handdown ลงมา
 
             // ตรวจสอบว่า Bubble แตะปลาหรือยัง
             foreach (var bubble in _bubbleGrid.Keys)
             {
-                if (bubble.Y >= _fishPosition.Y - _bubbleSize)
+                if (bubble.Y >= _fishPosition.Y - _bubbleSize - 50)
                 {
                     _isGameOver = true; // ตั้งค่า Game Over
                 }
             }
         }
+
 
 
 
@@ -214,10 +262,24 @@ namespace ProjectMidterm.States
                 _bubbleDirection = new Vector2((float)Math.Sin(_fishRotation), -(float)Math.Cos(_fishRotation));
                 _currentBubblePosition = _fishPosition;
 
-                _shootingSound.Play();
+                _shootingSound.Play(); // เล่นเสียงยิงบับเบิ้ล
 
             }
         }
+
+        private void RestartGame()
+        {
+            _isGameOver = false;
+            _score = 0;
+            _bubbleGrid.Clear();
+            _fishPosition = new Vector2(400, 450);
+            _handdownPosition = new Vector2(150, -500); // รีเซ็ตตำแหน่ง Handdown
+            _timeSinceLastDrop = 0f;
+
+            GenerateInitialGrid();
+            LoadNewBubble();
+        }
+
 
         private void AttachBubbleToGrid(Vector2 bubblePosition, string color)
         {
@@ -227,6 +289,10 @@ namespace ProjectMidterm.States
             {
                 Vector2 snappedPosition = GetNearestEmptyAdjacentPosition(nearestBubble);
 
+                // ตรวจสอบให้ Bubble อยู่ภายในขอบของ Play Area เท่านั้น
+                if (snappedPosition.X < _playAreaX || snappedPosition.X > (_playAreaX + _playAreaWidth - _bubbleSize))
+                    return;
+
                 if (!_bubbleGrid.ContainsKey(snappedPosition))
                 {
                     _bubbleGrid[snappedPosition] = color;
@@ -234,6 +300,7 @@ namespace ProjectMidterm.States
                 }
             }
         }
+
 
         private Vector2 FindClosestBubble(Vector2 position)
         {
@@ -253,15 +320,18 @@ namespace ProjectMidterm.States
             return closest;
         }
 
+
         private Vector2 GetNearestEmptyAdjacentPosition(Vector2 basePosition)
         {
+            int spacingX = _bubbleSize + 8; // ใช้ค่าระยะห่างแนวนอน
+            int spacingY = _bubbleSize + 8; // ใช้ค่าระยะห่างแนวตั้ง
+
             Vector2[] directions = {
-                new Vector2(-_bubbleSize, 0),
-                new Vector2(_bubbleSize, 0),
-                new Vector2(0, -_bubbleSize),
-                new Vector2(0, _bubbleSize),
-                new Vector2(-_bubbleSize / 2, -_bubbleSize),
-                new Vector2(_bubbleSize / 2, -_bubbleSize)
+                new Vector2(-spacingX, 0),
+                new Vector2(spacingX, 0),
+                new Vector2(0, spacingY),
+                new Vector2(-spacingX / 2, -spacingY),
+                new Vector2(spacingX / 2, -spacingY)
             };
 
             foreach (var dir in directions)
@@ -276,6 +346,7 @@ namespace ProjectMidterm.States
             return basePosition;
         }
 
+
         private void CheckMatches(Vector2 startPosition, string color)
         {
             HashSet<Vector2> matchedBubbles = new HashSet<Vector2>();
@@ -286,12 +357,21 @@ namespace ProjectMidterm.States
             {
                 foreach (var bubble in matchedBubbles)
                 {
-                    _bubbleGrid.Remove(bubble);
+                    _bubbleGrid.Remove(bubble); // ✅ ลบ Bubble ที่ Match
                 }
 
-                _score += matchedBubbles.Count * 10;
+                _score += matchedBubbles.Count * 10; // ✅ เพิ่มคะแนน
+            }
+
+            // ✅ ตรวจสอบว่า Bubble หายหมดหรือยัง
+            if (_bubbleGrid.Count == 0)
+            {
+                _game.ChangeState(new CongratulationState(_game, _graphicsDevice, _content, _gacha));
             }
         }
+
+
+
 
         private void FindMatchingBubbles(Vector2 position, string color, HashSet<Vector2> matchedBubbles)
         {
@@ -311,13 +391,15 @@ namespace ProjectMidterm.States
         {
             List<Vector2> neighbors = new List<Vector2>();
 
+            int spacingX = _bubbleSize + 8; // ✅ ใช้ค่าระยะห่างแนวนอน
+            int spacingY = _bubbleSize + 8; // ✅ ใช้ค่าระยะห่างแนวตั้ง
+
             Vector2[] directions = {
-                new Vector2(-_bubbleSize, 0),
-                new Vector2(_bubbleSize, 0),
-                new Vector2(0, -_bubbleSize),
-                new Vector2(0, _bubbleSize),
-                new Vector2(-_bubbleSize / 2, -_bubbleSize),
-                new Vector2(_bubbleSize / 2, -_bubbleSize)
+                new Vector2(-spacingX, 0),  // ซ้าย
+                new Vector2(spacingX, 0),   // ขวา
+                new Vector2(0, -spacingY),  // บน
+                new Vector2(0, spacingY),   // ล่าง
+   
             };
 
             foreach (var direction in directions)
@@ -332,18 +414,22 @@ namespace ProjectMidterm.States
             return neighbors;
         }
 
+
+
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-
             spriteBatch.Draw(_backgroundTexture, new Rectangle(0, 0, 800, 600), Color.White);
             spriteBatch.Draw(_menuButtonTexture, _menuButtonRect, Color.White);
 
-            // วาดขอบเขตให้ Bubble ชิ่ง
+            // ✅ วาดขอบเขตใหม่ให้ตรงกับ Play Area
             Texture2D boundary = new Texture2D(_graphicsDevice, 1, 1);
             boundary.SetData(new[] { Color.White });
-            spriteBatch.Draw(boundary, new Rectangle(_playAreaX - 5, 50, 5, 500), Color.Black);
-            spriteBatch.Draw(boundary, new Rectangle(_playAreaX + _playAreaWidth, 50, 5, 500), Color.Black);
+
+            // ✅ ปรับตำแหน่งให้ตรงกับ Bubble Grid
+            spriteBatch.Draw(boundary, new Rectangle(_playAreaX - 5, 50, 5, _gridHeight * (_bubbleSize + _spacing)), Color.Black); // ซ้าย
+            spriteBatch.Draw(boundary, new Rectangle(_playAreaX + _playAreaWidth, 50, 5, _gridHeight * (_bubbleSize + _spacing)), Color.Black); // ขวา
 
             // วาดฟองอากาศทั้งหมด
             foreach (var bubble in _bubbleGrid)
@@ -355,7 +441,10 @@ namespace ProjectMidterm.States
                 );
             }
 
+            // วาด Handdown
             spriteBatch.Draw(_handdownTexture, _handdownPosition, Color.White);
+
+            // วาดปลาที่ยิง
             spriteBatch.Draw(
                 _fishTexture,
                 _fishPosition,
@@ -374,19 +463,24 @@ namespace ProjectMidterm.States
             }
 
             spriteBatch.DrawString(_content.Load<SpriteFont>("Gamefont"), $"Score: {_score}", new Vector2(10, 10), Color.White);
-            spriteBatch.Draw(_bubbleTextures[_currentBubbleColor], new Rectangle(380, 400, _bubbleSize, _bubbleSize), Color.White);
-            spriteBatch.Draw(_bubbleTextures[_nextBubbleColor], new Rectangle(440, 400, _bubbleSize / 2, _bubbleSize / 2), Color.White);
+            spriteBatch.Draw(_bubbleTextures[_currentBubbleColor], new Rectangle(380, 400, 50, 50), Color.White);
+            spriteBatch.Draw(_bubbleTextures[_nextBubbleColor], new Rectangle(440, 400, 30, 30), Color.White);
 
-            // แสดงข้อความ "Game Over" เมื่อแพ้
+            // แสดงข้อความ "Game Over" และวิธีเริ่มเกมใหม่
             if (_isGameOver)
             {
                 Vector2 textSize = _gameOverFont.MeasureString("GAME OVER");
                 Vector2 textPosition = new Vector2((800 - textSize.X) / 2, 250);
                 spriteBatch.DrawString(_gameOverFont, "GAME OVER", textPosition, Color.Red);
+
+                Vector2 restartTextSize = _gameOverFont.MeasureString("Press Enter to Restart");
+                Vector2 restartTextPosition = new Vector2((800 - restartTextSize.X) / 2, 300);
+                spriteBatch.DrawString(_gameOverFont, "Press Enter to Restart", restartTextPosition, Color.White);
             }
 
             spriteBatch.End();
         }
+
 
         public override void PostUpdate(GameTime gameTime) { }
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>D:/ProjectMidterm/ProjectMidterm/Content/Handdown.png</SourceFile>
-  <SourceTime>2025-01-30T23:07:07.7071244+07:00</SourceTime>
-  <DestFile>D:/ProjectMidterm/ProjectMidterm/Content/bin/DesktopGL/Content/Handdown.xnb</DestFile>
-  <DestTime>2025-01-31T16:21:54.0084984+07:00</DestTime>
+  <SourceFile>D:/1/Bubblegame/ProjectMidterm/Content/Handdown.png</SourceFile>
+  <SourceTime>2025-01-31T19:49:38.6222151+07:00</SourceTime>
+  <DestFile>D:/1/Bubblegame/ProjectMidterm/Content/bin/DesktopGL/Content/Handdown.xnb</DestFile>
+  <DestTime>2025-01-31T20:04:11.2748758+07:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-17T00:05:56+07:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

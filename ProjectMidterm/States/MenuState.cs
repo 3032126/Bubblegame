@@ -4,8 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Audio; // เพิ่มเพื่อใช้เสียงเอฟเฟกต์
-
 
 namespace ProjectMidterm.States
 {
@@ -13,50 +11,44 @@ namespace ProjectMidterm.States
     {
         private Texture2D _backgroundTexture;
         private Texture2D _buttonTexture;
-        private Song _backgroundMusic; // เพลงพื้นหลัง
-
+        private Texture2D _catpicTexture;
+        private Texture2D _logoTexture;
+        private Song _backgroundMusic;
 
         private Rectangle _startButtonRect;
         private Rectangle _optionsButtonRect;
         private Rectangle _gachaButtonRect;
-        private Rectangle _exitButtonRect;
         private Rectangle _fishSelectionButtonRect;
+        private Rectangle _exitButtonRect;
 
         private SpriteFont _font;
-
         private MouseState _currentMouseState;
         private MouseState _previousMouseState;
-        private GachaState _gacha; // ✅ Store reference to GachaState
+        private GachaState _gacha;
 
         public MenuState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, GachaState gacha)
-     : base(game, graphicsDevice, content)
+            : base(game, graphicsDevice, content)
         {
-            _gacha = new GachaState(game, graphicsDevice, content);
-            _gacha = gacha; // ✅ Assign GachaState
+            _gacha = gacha;
 
             _backgroundTexture = _content.Load<Texture2D>("bg");
+            _catpicTexture = _content.Load<Texture2D>("cat");
+            _logoTexture = _content.Load<Texture2D>("logo");
             _buttonTexture = _content.Load<Texture2D>("button");
             _font = _content.Load<SpriteFont>("Gamefont");
-            _backgroundMusic = _content.Load<Song>("PokemonSoundtrack"); // โหลดเพลง
+            _backgroundMusic = _content.Load<Song>("PokemonSoundtrack");
 
-            MediaPlayer.Volume = OptionsState.GetSavedMusicVolume(); // ✅ ใช้ค่าที่บันทึกไว้
-
-            MediaPlayer.IsRepeating = true; // ให้เพลงเล่นซ้ำ
-            MediaPlayer.Volume = 0.1f; // กำหนดความดังของเพลง
-            MediaPlayer.Play(_backgroundMusic); // เล่นเพลงพื้นหลัง
-
-            _startButtonRect = new Rectangle(500, 120, 200, 50);
-            _optionsButtonRect = new Rectangle(500, 190, 200, 50);
-            _gachaButtonRect = new Rectangle(500, 260, 200, 50);
-            _fishSelectionButtonRect = new Rectangle(500, 330, 200, 50);
-            _exitButtonRect = new Rectangle(500, 400, 200, 50);
-
-            MediaPlayer.IsRepeating = true;
-
-            // ✅ ใช้ค่าที่ผู้เล่นตั้งไว้จาก OptionsState
             MediaPlayer.Volume = OptionsState.GetSavedMusicVolume();
-
+            MediaPlayer.IsRepeating = true;
             MediaPlayer.Play(_backgroundMusic);
+
+            int buttonWidth = 200, buttonHeight = 50, startX = 550, startY = 80, buttonSpacing = 70;
+
+            _startButtonRect = new Rectangle(startX, startY, buttonWidth, buttonHeight);
+            _fishSelectionButtonRect = new Rectangle(startX, startY + buttonSpacing, buttonWidth, buttonHeight);
+            _gachaButtonRect = new Rectangle(startX, startY + buttonSpacing * 2, buttonWidth, buttonHeight);
+            _optionsButtonRect = new Rectangle(startX, startY + buttonSpacing * 3, buttonWidth, buttonHeight);
+            _exitButtonRect = new Rectangle(startX, startY + buttonSpacing * 4, buttonWidth, buttonHeight);
         }
 
         public override void Update(GameTime gameTime)
@@ -72,21 +64,17 @@ namespace ProjectMidterm.States
                 {
                     _game.ChangeState(new GameplayState(_game, _graphicsDevice, _content, _gacha));
                 }
-                else if (_optionsButtonRect.Contains(mousePosition))
+                else if (_fishSelectionButtonRect.Contains(mousePosition))
                 {
-                    _game.ChangeState(new OptionsState(_game, _graphicsDevice, _content, _gacha));
+                    _game.ChangeState(new FishSelectionState(_game, _graphicsDevice, _content, _gacha));
                 }
                 else if (_gachaButtonRect.Contains(mousePosition))
                 {
                     _game.ChangeState(new GachaState(_game, _graphicsDevice, _content));
                 }
-                else if (_fishSelectionButtonRect.Contains(mousePosition))
-                {  
-                        if (_gacha == null)
-                        {
-                            _gacha = new GachaState(_game, _graphicsDevice, _content); // Ensure it's not null
-                        }
-                    _game.ChangeState(new FishSelectionState(_game, _graphicsDevice, _content, _gacha));
+                else if (_optionsButtonRect.Contains(mousePosition))
+                {
+                    _game.ChangeState(new OptionsState(_game, _graphicsDevice, _content, _gacha));
                 }
                 else if (_exitButtonRect.Contains(mousePosition))
                 {
@@ -102,14 +90,16 @@ namespace ProjectMidterm.States
             spriteBatch.Begin();
 
             spriteBatch.Draw(_backgroundTexture, _graphicsDevice.Viewport.Bounds, Color.White);
+            spriteBatch.Draw(_logoTexture, new Rectangle(160, 35, 200, 200), Color.White);
+            spriteBatch.Draw(_catpicTexture, new Rectangle(90, 180, 400, 300), Color.White);
 
-            DrawButton(spriteBatch, _startButtonRect, "Start");
-            DrawButton(spriteBatch, _optionsButtonRect, "Options");
-            DrawButton(spriteBatch, _gachaButtonRect, "Gacha");
-            DrawButton(spriteBatch, _fishSelectionButtonRect, "FishSelection");
-            DrawButton(spriteBatch, _exitButtonRect, "Exit");
+            DrawButton(spriteBatch, _startButtonRect, "START");
+            DrawButton(spriteBatch, _fishSelectionButtonRect, "FISH SKINS");
+            DrawButton(spriteBatch, _gachaButtonRect, "GACHA SKINS");
+            DrawButton(spriteBatch, _optionsButtonRect, "OPTIONS");
+            DrawButton(spriteBatch, _exitButtonRect, "EXIT");
+
             spriteBatch.End();
-
         }
 
         private void DrawButton(SpriteBatch spriteBatch, Rectangle rect, string text)
